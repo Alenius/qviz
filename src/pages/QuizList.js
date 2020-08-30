@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { map } from 'ramda'
-
+import { List } from 'antd'
 const getQuestionList = async () => {
   const res = await fetch('http://lvh.me:4000/quiz/?author=Adam')
   const json = await res.json()
@@ -22,7 +22,13 @@ function QuizList() {
     <div>
       <div>This is a page for listing the quizzes</div>
       {map((it) => {
-        return <div key={it.name + it.author}>{it.name}</div>
+        return (
+          <div style={{ width: '50vw' }}>
+            <List bordered size='small' key={it.name + it.author}>
+              {it.name}
+            </List>
+          </div>
+        )
       }, quizList)}
     </div>
   )
