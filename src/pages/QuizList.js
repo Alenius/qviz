@@ -22,7 +22,7 @@ function QuizList() {
     <div>
       <div>This is a page for listing the quizzes</div>
       {map((it) => {
-        return <div>{it.name}</div>
+        return <div key={it.name + it.author}>{it.name}</div>
       }, quizList)}
     </div>
   )
