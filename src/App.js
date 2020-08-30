@@ -1,30 +1,22 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-
-const getQuestions = async () => {
-  const res = await fetch("http://lvh.me:4000/questions?id=3");
-  const json = await res.json();
-  const questions = json.questions;
-  console.log({ questions });
-  return questions;
-};
+import React from 'react'
+import './App.css'
+import Start from './pages/Start'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import QuizList from './pages/QuizList'
 
 function App() {
-  const [questions, setQuestions] = useState(["question 1", "question 2"]);
-
-  useEffect(() => {
-    const getQuestionsAsync = async () => {
-      const fetchedQuestions = await getQuestions();
-      console.log({ fetchedQuestions });
-      setQuestions(fetchedQuestions[0].questions);
-    };
-    getQuestionsAsync();
-  }, []);
   return (
-    <div className="App">
-      <div>{questions.map((it) => it)}</div>
-    </div>
-  );
+    <Router>
+      <Switch>
+        <Route path='/quiz/list'>
+          <QuizList />
+        </Route>
+        <Route path='/'>
+          <Start />
+        </Route>
+      </Switch>
+    </Router>
+  )
 }
 
-export default App;
+export default App
