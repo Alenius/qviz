@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { map } from 'ramda'
-import { List } from 'antd'
+import { List, Space, Typography } from 'antd'
+import { PageLayout } from '../components/PageLayout'
 const getQuestionList = async () => {
   const res = await fetch('http://lvh.me:4000/quiz/?author=Adam')
   const json = await res.json()
@@ -19,18 +20,23 @@ function QuizList() {
   }, [])
 
   return (
-    <div>
-      <div>This is a page for listing the quizzes</div>
-      {map((it) => {
-        return (
-          <div style={{ width: '50vw' }}>
-            <List bordered size='small' key={it.name + it.author}>
-              {it.name}
-            </List>
-          </div>
-        )
-      }, quizList)}
-    </div>
+    <PageLayout>
+      <Space direction='vertical'>
+        <Typography.Title>quiz list</Typography.Title>
+        <Space direction='vertical'>
+          <div>This is a page for listing the quizzes</div>
+          {map((it) => {
+            return (
+              <div>
+                <List bordered size='small' key={it.name + it.author}>
+                  {it.name}
+                </List>
+              </div>
+            )
+          }, quizList)}
+        </Space>
+      </Space>
+    </PageLayout>
   )
 }
 
