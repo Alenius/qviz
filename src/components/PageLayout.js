@@ -9,7 +9,8 @@ const Header = styled.div`
 const Content = styled.div`
   width: 80%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `
 
 const Footer = styled.div``
