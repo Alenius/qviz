@@ -6,6 +6,10 @@ const Header = styled.div`
   padding-top: 1rem;
   padding-bottom: 1rem;
 `
+const StyledLayout = styled(Layout)`
+  display: flex;
+  align-items: center;
+`
 const Content = styled.div`
   width: 80%;
   display: flex;
@@ -19,9 +23,9 @@ export const PageLayout = (props) => {
   return (
     <Layout>
       <Header></Header>
-      <Layout>
+      <StyledLayout>
         <Content>{props.children}</Content>
-      </Layout>
+      </StyledLayout>
       <Footer />
     </Layout>
   )
