@@ -15,6 +15,14 @@ export default function Start() {
             <Link to='/quiz/list'>Press here please</Link>
           </Button>
         </Space>
+        <Space>
+          <Typography.Text>
+            Press this button to create a new quiz
+          </Typography.Text>
+          <Button type='primary'>
+            <Link to='/create-quiz'>Create new</Link>
+          </Button>
+        </Space>
       </Space>
     </PageLayout>
   )
