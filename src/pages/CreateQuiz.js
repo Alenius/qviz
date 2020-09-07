@@ -19,7 +19,9 @@ const FIELD_TYPE_QUESTION = 'question'
 const FIELD_TYPE_ANSWER = 'answer'
 
 export const CreateQuiz = () => {
-  const [quizEntityList, setQuizEntityList] = useState([])
+  const [questionEntities, setQuestionEntities] = useState([])
+  const [quizName, setQuizName] = useState('')
+  const [quizAuthor, setQuizAuthor] = useState('')
 
   const updateEntityFromField = (
     fieldType = FIELD_TYPE_QUESTION,
@@ -27,29 +29,40 @@ export const CreateQuiz = () => {
     index
   ) => {
     console.log(input)
-    const currentList = quizEntityList
+    const currentList = questionEntities
     const shouldUpdateQuestion = fieldType === FIELD_TYPE_QUESTION
     if (currentList[index]) {
       const updated = {
         ...currentList[index],
-        [shouldUpdateQuestion ? 'question' : 'answer']: input,
+        [shouldUpdateQuestion ? 'questionText' : 'acceptedAnswers']: input,
       }
       const updatedList = update(index, updated, currentList)
       console.log({ updatedList })
-      setQuizEntityList(updatedList)
+      setQuestionEntities(updatedList)
     } else {
       let newItem
       if (shouldUpdateQuestion) {
-        newItem = { question: input, answer: '' }
+        newItem = { questionText: input, acceptedAnswers: '' }
       } else {
-        newItem = { question: '', answer: input }
+        newItem = { questionText: '', acceptedAnswers: input }
       }
-      setQuizEntityList([...quizEntityList, newItem])
+      setQuestionEntities([...questionEntities, newItem])
     }
   }
 
-  const onFinish = () => {
-    console.log({ submitted: quizEntityList })
+  const onFinish = async () => {
+    const res = await fetch('http://lvh.me:4000/quiz', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify({
+        quizName,
+        author: quizAuthor,
+        questionEntities,
+      }),
+    })
+    console.log({ submitted: questionEntities, quizName, quizAuthor, res })
   }
 
   return (
@@ -66,7 +79,16 @@ export const CreateQuiz = () => {
       </CreateInfoContainer>
       <Form style={{ width: '100%' }} layout='vertical' onFinish={onFinish}>
         <Form.Item label='your name'>
-          <Input placeholder='your name here' />
+          <Input
+            placeholder='your name here'
+            onChange={(e) => setQuizAuthor(e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label='your name'>
+          <Input
+            placeholder='name of quiz'
+            onChange={(e) => setQuizName(e.target.value)}
+          />
         </Form.Item>
         <Form.List name='Add questions'>
           {(fields, { add, remove: removeFromForm }) => {
@@ -82,8 +104,8 @@ export const CreateQuiz = () => {
                         size='small'
                         type='text'
                         onClick={() => {
-                          setQuizEntityList(
-                            remove(index, index, quizEntityList)
+                          setQuestionEntities(
+                            remove(index, index, questionEntities)
                           )
                           removeFromForm(field.name)
                         }}
