@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 const getQuestions = async () => {
   const res = await fetch('http://lvh.me:4000/questions?id=3')
@@ -10,6 +11,7 @@ const getQuestions = async () => {
 function OngoingQuiz() {
   const [questions, setQuestions] = useState(['question 1', 'question 2'])
   const [currentQuestion, setCurrentQuestion] = useState(0)
+  let { id } = useParams()
 
   useEffect(() => {
     const getQuestionsAsync = async () => {
@@ -32,6 +34,7 @@ function OngoingQuiz() {
         <input title='Answer...' />
         <input type='submit' title='Svara' />
       </form>
+      <p>{id}</p>
     </div>
   )
 }
