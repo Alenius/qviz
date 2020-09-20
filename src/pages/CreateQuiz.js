@@ -84,7 +84,7 @@ export const CreateQuiz = () => {
             onChange={(e) => setQuizAuthor(e.target.value)}
           />
         </Form.Item>
-        <Form.Item label='your name'>
+        <Form.Item label='quiz name'>
           <Input
             placeholder='name of quiz'
             onChange={(e) => setQuizName(e.target.value)}
