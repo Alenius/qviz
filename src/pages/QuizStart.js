@@ -3,16 +3,19 @@ import { Alert, Button, Form, Input, Typography } from 'antd'
 import { useParams } from 'react-router-dom'
 import { PageLayout } from '../components/PageLayout'
 import { set } from 'ramda'
+import { getApiURL } from '../utils'
+
+const apiURL = getApiURL()
 
 const getQuestions = async (quizId) => {
-  const res = await fetch(`http://lvh.me:4000/questions?quizId=${quizId}`)
+  const res = await fetch(`${apiURL}/questions?quizId=${quizId}`)
   const { questions, quizName } = await res.json()
   return { questions, quizName }
 }
 
 const checkAnswer = async (questionId, userAnswer) => {
   const res = await fetch(
-    `http://lvh.me:4000/answer?questionId=${questionId}&userAnswer=${userAnswer}`
+    `${apiURL}/answer?questionId=${questionId}&userAnswer=${userAnswer}`
   )
   return res.json()
 }
