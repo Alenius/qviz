@@ -3,8 +3,11 @@ import { map } from 'ramda'
 import { List, Space, Typography, Card } from 'antd'
 import { PageLayout } from '../components/PageLayout'
 import { Link } from 'react-router-dom'
+import { getApiURL } from '../utils'
+
+const url = getApiURL()
 const getQuestionList = async () => {
-  const res = await fetch('http://localhost:4000/quiz')
+  const res = await fetch(`${url}/quiz`)
   const json = await res.json()
   return json.foundQuizzes
 }
