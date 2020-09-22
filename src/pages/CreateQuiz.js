@@ -3,6 +3,9 @@ import { PageLayout } from '../components/PageLayout'
 import { Typography, Collapse, Input, Form, Button, Divider, Space } from 'antd'
 import styled from 'styled-components'
 import { update, remove } from 'ramda'
+import { getApiURL } from '../utils'
+
+const apiUrl = getApiURL()
 
 const CreateInfoContainer = styled.div`
   width: 80%;
@@ -51,7 +54,7 @@ export const CreateQuiz = () => {
   }
 
   const onFinish = async () => {
-    const res = await fetch('http://lvh.me:4000/quiz', {
+    const res = await fetch(`${apiUrl}/quiz`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
