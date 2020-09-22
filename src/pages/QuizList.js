@@ -25,25 +25,24 @@ function QuizList() {
 
   return (
     <PageLayout>
-      <Space direction='vertical'>
+      <Space direction='vertical' align='center'>
         <Typography.Title>quiz list</Typography.Title>
-        <Space direction='vertical'>
-          <div>This is a page for listing the quizzes</div>
-          <List
-            dataSource={quizList}
-            grid={{ gutter: 16, column: 4 }}
-            size='medium'
-            renderItem={(item) => (
-              <Link to={`/quiz/id=${item.id}`}>
-                <List.Item>
-                  <Card
-                    title={item.name}
-                  >{`Author: ${item.author}, Number of questions: ${item.numberOfQuestions}`}</Card>
-                </List.Item>
-              </Link>
-            )}
-          />
-        </Space>
+        <div>This is a page for listing the quizzes</div>
+        <List
+          dataSource={quizList}
+          grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}
+          size='large'
+          renderItem={(item) => (
+            <Link to={`/quiz/id=${item.id}`}>
+              <List.Item>
+                <Card
+                  title={item.name}
+                  color='blue'
+                >{`Author: ${item.author}, Number of questions: ${item.numberOfQuestions}`}</Card>
+              </List.Item>
+            </Link>
+          )}
+        />
       </Space>
     </PageLayout>
   )
