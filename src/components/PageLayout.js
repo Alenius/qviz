@@ -21,7 +21,7 @@ const Footer = styled.div``
 
 export const PageLayout = (props) => {
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Header></Header>
       <StyledLayout>
         <Content>{props.children}</Content>
