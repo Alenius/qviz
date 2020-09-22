@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Alert, Button, Form, Input, Typography } from 'antd'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { PageLayout } from '../components/PageLayout'
 import { set } from 'ramda'
 import { getApiURL } from '../utils'
@@ -93,9 +93,14 @@ export const QuizStart = () => {
       <Typography.Title>{quizName}</Typography.Title>
       {quizStarted ? (
         quizFinished ? (
-          <Typography.Text>
-            Quiz finished! You got {correctCounter} correct answers
-          </Typography.Text>
+          <>
+            <Typography.Text>
+              Quiz finished! You got {correctCounter} correct answers
+            </Typography.Text>
+            <Button type='primary'>
+              <Link to='quiz/list'>Go back to quiz list</Link>
+            </Button>
+          </>
         ) : questionAnswered ? (
           <>
             {userAnswerWasCorrect ? (
