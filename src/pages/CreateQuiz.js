@@ -7,13 +7,14 @@ import {
   Form,
   Button,
   Divider,
-  Space,
   Spin,
+  PageHeader,
 } from 'antd'
 import styled from 'styled-components'
 import { update, remove } from 'ramda'
 import { getApiURL } from '../utils'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { ArrowLeftOutlined } from '@ant-design/icons'
 
 const apiUrl = getApiURL()
 
@@ -37,6 +38,7 @@ export const CreateQuiz = () => {
   const [quizAuthor, setQuizAuthor] = useState('')
   const [loading, setLoading] = useState(false)
   const [quizSubmitted, setQuizSubmitted] = useState(false)
+  const navHistory = useHistory()
 
   const updateEntityFromField = (
     fieldType = FIELD_TYPE_QUESTION,
@@ -87,7 +89,12 @@ export const CreateQuiz = () => {
 
   return (
     <PageLayout>
-      <Typography.Title>quiz creator</Typography.Title>
+      <PageHeader
+        title='quiz creator'
+        subTitle='the place to create all your quizzes'
+        backIcon={<ArrowLeftOutlined color='white' />}
+        onBack={() => navHistory.goBack()}
+      />
       {loading ? (
         <Spin />
       ) : quizSubmitted ? (
@@ -188,7 +195,11 @@ export const CreateQuiz = () => {
               }}
             </Form.List>
             <Form.Item>
-              <Button type='primary' htmlType='submit'>
+              <Button
+                style={{ marginTop: '1rem' }}
+                type='primary'
+                htmlType='submit'
+              >
                 Submit
               </Button>
             </Form.Item>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Form, Input, Typography } from 'antd'
-import { Link, useParams } from 'react-router-dom'
+import { Alert, Button, Form, Input, PageHeader, Typography } from 'antd'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '../components/PageLayout'
 import { set } from 'ramda'
 import { getApiURL } from '../utils'
+import { ArrowLeftOutlined } from '@ant-design/icons'
 
 const apiURL = getApiURL()
 
@@ -34,6 +35,7 @@ export const QuizStart = () => {
   const [correctCounter, setCorrectCounter] = useState(0)
   const [quizFinished, setQuizFinished] = useState(false)
   const [bonusText, setBonusText] = useState('')
+  const navHistory = useHistory()
 
   useEffect(() => {
     const getQuestionsAsync = async () => {
@@ -91,56 +93,69 @@ export const QuizStart = () => {
   return (
     <PageLayout>
       <Typography.Title>{quizName}</Typography.Title>
-      {quizStarted ? (
-        quizFinished ? (
-          <>
-            <Typography.Text>
-              Quiz finished! You got {correctCounter} correct answers
-            </Typography.Text>
-            <Button type='primary'>
-              <Link to='quiz/list'>Go back to quiz list</Link>
-            </Button>
-          </>
-        ) : questionAnswered ? (
-          <>
-            {userAnswerWasCorrect ? (
-              <Alert message='Correct!' type='success' showIcon />
-            ) : (
-              <Alert message='Wrong answer' type='error' showIcon />
-            )}
-            <Typography.Text>Your answer: {userAnswer}</Typography.Text>
-            <Typography.Text>Correct answer: {correctAnswer}</Typography.Text>
-            {bonusText && (
-              <Typography.Text>More info: {bonusText}</Typography.Text>
-            )}
-            <Button type='primary' onClick={() => goToNextQuestion()}>
-              Next Question
-            </Button>
-          </>
-        ) : (
-          <Form onFinish={(values) => handleOnFinish(values)}>
-            <Form.Item label='question'>
-              <Typography.Text>{currentQuestionText}</Typography.Text>
-            </Form.Item>
-            <Form.Item label='answer' name='answer'>
-              <Input type='text' title='answer' />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                onChange={(e) => console.log({ e })}
-              >
-                Send answer
+      <PageHeader
+        title='quiz list'
+        subTitle='Here is where you find all the quizzes'
+        backIcon={<ArrowLeftOutlined color='white' />}
+        onBack={() => navHistory.goBack()}
+      />
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        {quizStarted ? (
+          quizFinished ? (
+            <>
+              <Typography.Text>
+                Quiz finished! You got {correctCounter} correct answers
+              </Typography.Text>
+              <Button type='primary'>
+                <Link to='quiz/list'>Go back to quiz list</Link>
               </Button>
-            </Form.Item>
-          </Form>
-        )
-      ) : (
-        <Button type='primary' onClick={() => handleStartClick()}>
-          Start quiz
-        </Button>
-      )}
+            </>
+          ) : questionAnswered ? (
+            <>
+              {userAnswerWasCorrect ? (
+                <Alert message='Correct!' type='success' showIcon />
+              ) : (
+                <Alert message='Wrong answer' type='error' showIcon />
+              )}
+              <Typography.Text>Your answer: {userAnswer}</Typography.Text>
+              <Typography.Text>Correct answer: {correctAnswer}</Typography.Text>
+              {bonusText && (
+                <Typography.Text>More info: {bonusText}</Typography.Text>
+              )}
+              <Button type='primary' onClick={() => goToNextQuestion()}>
+                Next Question
+              </Button>
+            </>
+          ) : (
+            <Form onFinish={(values) => handleOnFinish(values)}>
+              <Form.Item label='question'>
+                <Typography.Text>{currentQuestionText}</Typography.Text>
+              </Form.Item>
+              <Form.Item label='answer' name='answer'>
+                <Input type='text' title='answer' />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  onChange={(e) => console.log({ e })}
+                >
+                  Send answer
+                </Button>
+              </Form.Item>
+            </Form>
+          )
+        ) : (
+          <Button type='primary' onClick={() => handleStartClick()}>
+            Start quiz
+          </Button>
+        )}
+      </div>
     </PageLayout>
   )
 }
