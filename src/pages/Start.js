@@ -8,7 +8,7 @@ export default function Start() {
   return (
     <PageLayout>
       <Space direction='vertical' align='center'>
-        <Typography.Title>qvis</Typography.Title>
+        <Typography.Title>qviz</Typography.Title>
         <Space>
           <Typography.Text>Press this button to the quiz list</Typography.Text>
           <Button type='primary'>
