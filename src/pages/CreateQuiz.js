@@ -19,7 +19,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 const apiUrl = getApiURL()
 
 const CreateInfoContainer = styled.div`
-  width: 80%;
+  max-width: 800px;
 `
 
 const TitleAndRemoveContainer = styled.div`
@@ -27,6 +27,10 @@ const TitleAndRemoveContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`
+
+const StyledForm = styled(Form)`
+  max-width: 800px;
 `
 
 const FIELD_TYPE_QUESTION = 'question'
@@ -88,13 +92,7 @@ export const CreateQuiz = () => {
   }
 
   return (
-    <PageLayout>
-      <PageHeader
-        title='quiz creator'
-        subTitle='the place to create all your quizzes'
-        backIcon={<ArrowLeftOutlined color='white' />}
-        onBack={() => navHistory.goBack()}
-      />
+    <PageLayout headerTitle='create quiz'>
       {loading ? (
         <Spin />
       ) : quizSubmitted ? (
@@ -115,7 +113,7 @@ export const CreateQuiz = () => {
               </Collapse.Panel>
             </Collapse>
           </CreateInfoContainer>
-          <Form style={{ width: '100%' }} layout='vertical' onFinish={onFinish}>
+          <StyledForm layout='vertical' onFinish={onFinish}>
             <Form.Item label='your name'>
               <Input
                 placeholder='your name here'
@@ -203,7 +201,7 @@ export const CreateQuiz = () => {
                 Submit
               </Button>
             </Form.Item>
-          </Form>
+          </StyledForm>
         </>
       )}
     </PageLayout>

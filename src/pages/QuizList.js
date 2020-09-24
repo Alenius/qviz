@@ -26,13 +26,7 @@ function QuizList() {
   }, [])
 
   return (
-    <PageLayout>
-      <PageHeader
-        title='quiz list'
-        subTitle='Here is where you find all the quizzes'
-        backIcon={<ArrowLeftOutlined color='white' />}
-        onBack={() => navHistory.goBack()}
-      />
+    <PageLayout headerTitle='quiz list'>
       <List
         dataSource={quizList}
         grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4 }}

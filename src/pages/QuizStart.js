@@ -5,6 +5,11 @@ import { PageLayout } from '../components/PageLayout'
 import { set } from 'ramda'
 import { getApiURL } from '../utils'
 import { ArrowLeftOutlined } from '@ant-design/icons'
+import styled from 'styled-components'
+
+const StyledForm = styled(Form)`
+  max-width: 800px;
+`
 
 const apiURL = getApiURL()
 
@@ -91,71 +96,61 @@ export const QuizStart = () => {
     }
   }
   return (
-    <PageLayout>
-      <Typography.Title>{quizName}</Typography.Title>
-      <PageHeader
-        title='quiz list'
-        subTitle='Here is where you find all the quizzes'
-        backIcon={<ArrowLeftOutlined color='white' />}
-        onBack={() => navHistory.goBack()}
-      />
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        {quizStarted ? (
-          quizFinished ? (
-            <>
-              <Typography.Text>
-                Quiz finished! You got {correctCounter} correct answers
-              </Typography.Text>
-              <Button type='primary'>
-                <Link to='quiz/list'>Go back to quiz list</Link>
-              </Button>
-            </>
-          ) : questionAnswered ? (
-            <>
-              {userAnswerWasCorrect ? (
-                <Alert message='Correct!' type='success' showIcon />
-              ) : (
-                <Alert message='Wrong answer' type='error' showIcon />
-              )}
-              <Typography.Text>Your answer: {userAnswer}</Typography.Text>
-              <Typography.Text>Correct answer: {correctAnswer}</Typography.Text>
-              {bonusText && (
-                <Typography.Text>More info: {bonusText}</Typography.Text>
-              )}
-              <Button type='primary' onClick={() => goToNextQuestion()}>
-                Next Question
-              </Button>
-            </>
-          ) : (
-            <Form onFinish={(values) => handleOnFinish(values)}>
-              <Form.Item label='question'>
-                <Typography.Text>{currentQuestionText}</Typography.Text>
-              </Form.Item>
-              <Form.Item label='answer' name='answer'>
-                <Input type='text' title='answer' />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type='primary'
-                  htmlType='submit'
-                  onChange={(e) => console.log({ e })}
-                >
-                  Send answer
-                </Button>
-              </Form.Item>
-            </Form>
-          )
+    <PageLayout headerTitle={quizName}>
+      {quizStarted ? (
+        quizFinished ? (
+          <>
+            <Typography.Text>
+              Quiz finished! You got {correctCounter} correct answers
+            </Typography.Text>
+            <Button type='primary'>
+              <Link to='quiz/list'>Go back to quiz list</Link>
+            </Button>
+          </>
+        ) : questionAnswered ? (
+          <>
+            {userAnswerWasCorrect ? (
+              <Alert message='Correct!' type='success' showIcon />
+            ) : (
+              <Alert message='Wrong answer' type='error' showIcon />
+            )}
+            <Typography.Text>Your answer: {userAnswer}</Typography.Text>
+            <Typography.Text>Correct answer: {correctAnswer}</Typography.Text>
+            {bonusText && (
+              <Typography.Text>More info: {bonusText}</Typography.Text>
+            )}
+            <Button type='primary' onClick={() => goToNextQuestion()}>
+              Next Question
+            </Button>
+          </>
         ) : (
-          <Button type='primary' onClick={() => handleStartClick()}>
-            Start quiz
-          </Button>
-        )}
-      </div>
+          <StyledForm onFinish={(values) => handleOnFinish(values)}>
+            <Form.Item label='question'>
+              <Typography.Text>{currentQuestionText}</Typography.Text>
+            </Form.Item>
+            <Form.Item label='answer' name='answer'>
+              <Input type='text' title='answer' />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type='primary'
+                htmlType='submit'
+                onChange={(e) => console.log({ e })}
+              >
+                Send answer
+              </Button>
+            </Form.Item>
+          </StyledForm>
+        )
+      ) : (
+        <Button
+          type='primary'
+          onClick={() => handleStartClick()}
+          style={{ maxWidth: '100px' }}
+        >
+          Start quiz
+        </Button>
+      )}
     </PageLayout>
   )
 }
