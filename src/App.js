@@ -5,8 +5,7 @@ import Start from './pages/Start'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import QuizList from './pages/QuizList'
 import { CreateQuiz } from './pages/CreateQuiz'
-import OngoingQuiz from './pages/OngoingQuiz'
-import { QuizStart } from './pages/QuizStart'
+import { OngoingQuiz } from './pages/OngoingQuiz'
 
 function App() {
   return (
@@ -16,7 +15,7 @@ function App() {
           <CreateQuiz />
         </Route>
         <Route path='/quiz/id=:id'>
-          <QuizStart />
+          <OngoingQuiz />
         </Route>
         <Route path='/quiz/list'>
           <QuizList />
