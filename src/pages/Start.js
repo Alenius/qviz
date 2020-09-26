@@ -13,11 +13,17 @@ const StyledSpace = styled(Space)`
   }
 `
 
+const Title = styled(Typography.Title)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
 export default function Start() {
   return (
     <PageLayout>
       <Space direction='vertical'>
-        <Typography.Title>qviz</Typography.Title>
+        <Title>qviz</Title>
         <StyledSpace>
           <Typography.Text>Press this button to the quiz list</Typography.Text>
           <Button type='primary'>
