@@ -15,11 +15,14 @@ import { update, remove } from 'ramda'
 import { getApiURL } from '../utils'
 import { Link, useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
+import { WINDOW_SIZES_PX } from '../constants'
 
 const apiUrl = getApiURL()
 
-const CreateInfoContainer = styled.div`
-  max-width: 800px;
+const StyledCollapse = styled(Collapse)`
+  margin-bottom: 1rem;
+  align-self: flex-start;
+  width: 100%;
 `
 
 const TitleAndRemoveContainer = styled.div`
@@ -30,7 +33,7 @@ const TitleAndRemoveContainer = styled.div`
 `
 
 const StyledForm = styled(Form)`
-  max-width: 800px;
+  width: 100%;
 `
 
 const FIELD_TYPE_QUESTION = 'question'
@@ -104,15 +107,13 @@ export const CreateQuiz = () => {
         </>
       ) : (
         <>
-          <CreateInfoContainer>
-            <Collapse>
-              <Collapse.Panel header='How to create a quiz'>
-                Add all your accepted answer with slashes in between. For
-                example: If the question was "How many sides does a rectangle
-                have", the answer could be "4/four".
-              </Collapse.Panel>
-            </Collapse>
-          </CreateInfoContainer>
+          <StyledCollapse>
+            <Collapse.Panel header='How to create a quiz'>
+              Add all your accepted answer with slashes in between. For example:
+              If the question was "How many sides does a rectangle have", the
+              answer could be "4/four".
+            </Collapse.Panel>
+          </StyledCollapse>
           <StyledForm layout='vertical' onFinish={onFinish}>
             <Form.Item label='your name'>
               <Input

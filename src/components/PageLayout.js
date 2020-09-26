@@ -3,9 +3,11 @@ import styled from 'styled-components'
 import { Layout, PageHeader, Space } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
+import { WINDOW_SIZES_PX } from '../constants'
 
 const BaseLayout = styled(Layout)`
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
 `
@@ -14,16 +16,24 @@ const Header = styled.div`
   padding-bottom: 1rem;
 `
 const StyledLayout = styled(Layout)`
-  width: 80%;
+  display: flex;
+  width: 50%;
+  @media (max-width: ${WINDOW_SIZES_PX.xs}) {
+    width: 95%;
+  }
+  @media (max-width: ${WINDOW_SIZES_PX.sm}) {
+    width: 90%;
+  }
+  @media (max-width: ${WINDOW_SIZES_PX.md}) {
+    width: 75%;
+  }
 `
+
 const Content = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  @media (max-width: 600px) {
-    width: 90%;
-    align-items: center;
-  }
+  align-items: center;
 `
 
 const Footer = styled.div``

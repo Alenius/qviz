@@ -16,7 +16,7 @@ const StyledSpace = styled(Space)`
 export default function Start() {
   return (
     <PageLayout>
-      <Space direction='vertical' align='center'>
+      <Space direction='vertical'>
         <Typography.Title>qviz</Typography.Title>
         <StyledSpace>
           <Typography.Text>Press this button to the quiz list</Typography.Text>

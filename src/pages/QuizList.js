@@ -28,16 +28,19 @@ function QuizList() {
   return (
     <PageLayout headerTitle='quiz list'>
       <List
-        dataSource={quizList}
-        grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4 }}
-        size='large'
-        style={{ width: '100%' }}
+        dataSource={[
+          ...quizList,
+          ...quizList,
+          ...quizList,
+          ...quizList,
+          ...quizList,
+        ]}
+        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 3 }}
         renderItem={(item) => (
           <Link to={`/quiz/id=${item.id}`}>
             <List.Item>
               <Card
                 title={item.name}
-                color='blue'
               >{`Author: ${item.author}, Number of questions: ${item.numberOfQuestions}`}</Card>
             </List.Item>
           </Link>
