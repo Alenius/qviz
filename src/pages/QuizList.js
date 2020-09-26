@@ -28,13 +28,7 @@ function QuizList() {
   return (
     <PageLayout headerTitle='quiz list'>
       <List
-        dataSource={[
-          ...quizList,
-          ...quizList,
-          ...quizList,
-          ...quizList,
-          ...quizList,
-        ]}
+        dataSource={quizList}
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 3 }}
         renderItem={(item) => (
           <Link to={`/quiz/id=${item.id}`}>
