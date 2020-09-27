@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Typography, Layout, Space } from 'antd'
+import { Button, Typography, Space } from 'antd'
 import styled from 'styled-components'
 import { PageLayout } from '../components/PageLayout'
 import { WINDOW_SIZES } from '../constants'

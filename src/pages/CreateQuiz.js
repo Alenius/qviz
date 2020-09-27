@@ -1,21 +1,10 @@
 import React, { useState } from 'react'
 import { PageLayout } from '../components/PageLayout'
-import {
-  Typography,
-  Collapse,
-  Input,
-  Form,
-  Button,
-  Divider,
-  Spin,
-  PageHeader,
-} from 'antd'
+import { Typography, Collapse, Input, Form, Button, Divider, Spin } from 'antd'
 import styled from 'styled-components'
 import { update, remove } from 'ramda'
 import { getApiURL } from '../utils'
-import { Link, useHistory } from 'react-router-dom'
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import { WINDOW_SIZES_PX } from '../constants'
+import { Link } from 'react-router-dom'
 
 const apiUrl = getApiURL()
 
@@ -45,7 +34,6 @@ export const CreateQuiz = () => {
   const [quizAuthor, setQuizAuthor] = useState('')
   const [loading, setLoading] = useState(false)
   const [quizSubmitted, setQuizSubmitted] = useState(false)
-  const navHistory = useHistory()
 
   const updateEntityFromField = (
     fieldType = FIELD_TYPE_QUESTION,
@@ -76,7 +64,7 @@ export const CreateQuiz = () => {
   const onFinish = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${apiUrl}/quiz`, {
+      await fetch(`${apiUrl}/quiz`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',

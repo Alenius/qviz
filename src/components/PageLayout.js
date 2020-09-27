@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Layout, PageHeader, Space } from 'antd'
+import { Layout, PageHeader } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { WINDOW_SIZES_PX } from '../constants'

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { map } from 'ramda'
-import { List, Space, Typography, Card, PageHeader } from 'antd'
-import { ArrowLeftOutlined, LeftAr } from '@ant-design/icons'
+import { List, Card } from 'antd'
 import { PageLayout } from '../components/PageLayout'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getApiURL } from '../utils'
 
 const url = getApiURL()
@@ -15,7 +13,6 @@ const getQuestionList = async () => {
 
 function QuizList() {
   const [quizList, setQuizList] = useState([])
-  const navHistory = useHistory()
 
   useEffect(() => {
     const getQuestionListAsync = async () => {
