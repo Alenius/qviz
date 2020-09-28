@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
 import { formatTimerString, getApiURL } from '../utils'
@@ -165,7 +165,7 @@ export const OngoingQuiz = () => {
           <Typography.Text>{currentQuestionText}</Typography.Text>
         </Form.Item>
         <Form.Item label='answer' name='answer'>
-          <Input type='text' title='answer' />
+          <Input type='text' title='answer' autoComplete='off' />
         </Form.Item>
         <Form.Item>
           <Button
