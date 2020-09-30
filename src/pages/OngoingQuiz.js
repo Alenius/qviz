@@ -227,7 +227,7 @@ const QuizFinished = ({
         Play this quiz again
       </Button>
       <Button type='primary'>
-        <Link to='quiz/list'>Go back to quiz list</Link>
+        <Link to='/quiz/list'>Go back to quiz list</Link>
       </Button>
     </Space>
   </>
