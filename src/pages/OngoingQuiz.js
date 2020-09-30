@@ -82,6 +82,16 @@ export const OngoingQuiz = () => {
     userAnswerWasCorrect && setCorrectCounter(correctCounter + 1)
   }
 
+  const resetQuiz = () => {
+    setCurrentQuestionIndex(0)
+    setUserAnswer('')
+    setQuestionAnswered(false)
+    setQuizStarted(true)
+    setQuizFinished(false)
+    setTotalTime(0)
+    setCorrectCounter(0)
+  }
+
   const handleStartClick = () => {
     setQuizStarted(true)
     setCurrentQuestionIndex(0)
@@ -124,6 +134,7 @@ export const OngoingQuiz = () => {
           correctCounter={correctCounter}
           totalTime={totalTime}
           numberOfQuestions={questions.length}
+          resetQuiz={resetQuiz}
         />
       </PageLayout>
     )
@@ -196,16 +207,25 @@ const QuizStart = ({ handleStartClick }) => (
   </Space>
 )
 
-const QuizFinished = ({ correctCounter, totalTime, numberOfQuestions }) => (
+const QuizFinished = ({
+  correctCounter,
+  totalTime,
+  numberOfQuestions,
+  resetQuiz,
+}) => (
   <>
     <Typography.Title level={3}>Quiz finished!</Typography.Title>
     <Space direction='vertical' align='center'>
       <Typography.Text>
-        Correct answers: {correctCounter}/{numberOfQuestions}
+        Correct answers: {correctCounter}/{numberOfQuestions} (
+        {Math.round((correctCounter / numberOfQuestions) * 100)}%)
       </Typography.Text>
       <Typography.Text>
         Total time: {formatTimerString(totalTime)}
       </Typography.Text>
+      <Button type='primary' onClick={() => resetQuiz()}>
+        Play this quiz again
+      </Button>
       <Button type='primary'>
         <Link to='quiz/list'>Go back to quiz list</Link>
       </Button>
