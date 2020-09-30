@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
 import { Link, useHistory, useParams } from 'react-router-dom'
@@ -44,6 +44,8 @@ export const OngoingQuiz = () => {
   const [totalTime, setTotalTime] = useState(0)
   const [fetchingAnswer, setFetchingAnswer] = useState(false)
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
+  const inputFieldRef = useRef(null)
+  const nextButtonRef = useRef(null)
 
   useEffect(() => {
     const getQuestionsAsync = async () => {
@@ -58,6 +60,7 @@ export const OngoingQuiz = () => {
   useEffect(() => {
     if (currentQuestionIndex !== undefined) {
       setCurrentQuestionText(questions[currentQuestionIndex].question_text)
+      inputFieldRef.current.focus()
     }
   }, [currentQuestionIndex, questions])
 
@@ -105,6 +108,7 @@ export const OngoingQuiz = () => {
     stopTimer()
     const questionId = questions[currentQuestionIndex].id
     await fetchAnswer(questionId, answer)
+    nextButtonRef.current.focus()
   }
 
   const goToNextQuestion = () => {
@@ -116,6 +120,7 @@ export const OngoingQuiz = () => {
       setUserAnswer('')
       setCurrentQuestionIndex(nextIndex)
       startTimer()
+      // inputFieldRef.current.focus()
     }
   }
 
@@ -157,7 +162,11 @@ export const OngoingQuiz = () => {
               {bonusText !== 'undefined' && ( // TODO: Fix this in the backend
                 <Typography.Text>More info: {bonusText}</Typography.Text>
               )}
-              <Button type='primary' onClick={() => goToNextQuestion()}>
+              <Button
+                type='primary'
+                onClick={() => goToNextQuestion()}
+                ref={nextButtonRef}
+              >
                 {isLastQuestion ? 'Finish quiz' : 'Next Question'}
               </Button>
             </Space>
@@ -176,7 +185,12 @@ export const OngoingQuiz = () => {
           <Typography.Text>{currentQuestionText}</Typography.Text>
         </Form.Item>
         <Form.Item label='answer' name='answer'>
-          <Input type='text' title='answer' autoComplete='off' />
+          <Input
+            type='text'
+            title='answer'
+            autoComplete='off'
+            ref={inputFieldRef}
+          />
         </Form.Item>
         <Form.Item>
           <Button
