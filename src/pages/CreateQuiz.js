@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PageLayout } from '../components/PageLayout'
 import { Typography, Collapse, Input, Form, Button, Divider, Spin } from 'antd'
 import styled from 'styled-components'
-import { update, remove } from 'ramda'
+import { update, remove, last, length, append } from 'ramda'
 import { getApiURL } from '../utils'
 import { Link } from 'react-router-dom'
 
@@ -27,6 +27,7 @@ const StyledForm = styled(Form)`
 
 const FIELD_TYPE_QUESTION = 'question'
 const FIELD_TYPE_ANSWER = 'answer'
+const FIELD_TYPE_EXTRA_INFO = 'extraInfo'
 
 export const CreateQuiz = () => {
   const [questionEntities, setQuestionEntities] = useState([])
@@ -34,6 +35,31 @@ export const CreateQuiz = () => {
   const [quizAuthor, setQuizAuthor] = useState('')
   const [loading, setLoading] = useState(false)
   const [quizSubmitted, setQuizSubmitted] = useState(false)
+  const [addQuestionEnabled, setAddQuestionEnabled] = useState(false)
+
+  useEffect(() => {
+    const lastQuestionEntity = last(questionEntities)
+    if (!lastQuestionEntity) {
+      setAddQuestionEnabled(true)
+    } else {
+      const { questionText, acceptedAnswers } = lastQuestionEntity
+      const bothFilled = questionText && acceptedAnswers
+      bothFilled ? setAddQuestionEnabled(true) : setAddQuestionEnabled(false)
+    }
+  }, [questionEntities])
+
+  const fetchAnswers = async (quizName, quizAuthor, questionEntities) =>
+    fetch(`${apiUrl}/quiz`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify({
+        quizName,
+        author: quizAuthor,
+        questionEntities,
+      }),
+    })
 
   const updateEntityFromField = (
     fieldType = FIELD_TYPE_QUESTION,
@@ -42,6 +68,7 @@ export const CreateQuiz = () => {
   ) => {
     const currentList = questionEntities
     const shouldUpdateQuestion = fieldType === FIELD_TYPE_QUESTION
+    const shouldUpdateExtraInfo = fieldType === FIELD_TYPE_EXTRA_INFO
     if (currentList[index]) {
       const updated = {
         ...currentList[index],
@@ -61,23 +88,38 @@ export const CreateQuiz = () => {
     }
   }
 
+  const updateQuestionText = (input, index) => {
+    const currentList = questionEntities
+    const isNewQuestionEntity = length(currentList) - 1 === index
+
+    if (isNewQuestionEntity) {
+      const newItem = {
+        questionText: input,
+        acceptedAnswers: '',
+        extraInfo: '',
+      }
+      const updatedList = append(newItem, currentList)
+      setQuestionEntities(updatedList)
+    } else {
+      const currentQuestionEntity = currentList[index]
+      const { acceptedAnswers, extraInfo } = currentQuestionEntity
+      const updatedList = update(
+        index,
+        { questionText: input, acceptedAnswers, extraInfo },
+        currentList
+      )
+      setQuestionEntities(updatedList)
+    }
+  }
+
   const onFinish = async () => {
     setLoading(true)
     try {
-      await fetch(`${apiUrl}/quiz`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({
-          quizName,
-          author: quizAuthor,
-          questionEntities,
-        }),
-      })
+      await fetchAnswers(quizName, quizAuthor, questionEntities)
       setLoading(false)
       setQuizSubmitted(true)
     } catch (err) {
+      setLoading(false)
       console.err(err)
     }
   }
@@ -95,87 +137,54 @@ export const CreateQuiz = () => {
         </>
       ) : (
         <>
-          <StyledCollapse>
-            <Collapse.Panel header='How to create a quiz'>
-              Add all your accepted answer with slashes in between. For example:
-              If the question was "How many sides does a rectangle have", the
-              answer could be "4/four".
-            </Collapse.Panel>
-          </StyledCollapse>
+          <HowTo />
           <StyledForm layout='vertical' onFinish={onFinish}>
-            <Form.Item label='your name'>
-              <Input
-                placeholder='your name here'
-                onChange={(e) => setQuizAuthor(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item label='quiz name'>
-              <Input
-                placeholder='name of quiz'
-                onChange={(e) => setQuizName(e.target.value)}
-              />
-            </Form.Item>
+            <FormNameInput
+              setQuizAuthor={setQuizAuthor}
+              setQuizName={setQuizName}
+            />
             <Form.List name='Add questions'>
               {(fields, { add, remove: removeFromForm }) => {
                 return (
                   <div>
                     {fields.map((field, index) => (
                       <div key={`container ${index}`}>
-                        <TitleAndRemoveContainer>
-                          <Typography.Title level={3}>
-                            {`question ${index + 1}`}
-                          </Typography.Title>
-                          <Button
-                            size='small'
-                            type='text'
-                            onClick={() => {
-                              setQuestionEntities(
-                                remove(index, index, questionEntities)
-                              )
-                              removeFromForm(field.name)
-                            }}
-                          >
-                            Remove question
-                          </Button>
-                        </TitleAndRemoveContainer>
-                        <Form.Item
-                          {...field}
-                          key={`question ${index}`}
-                          label='question'
-                        >
-                          <Input
-                            placeholder='your question here'
-                            onInput={(e) =>
-                              updateEntityFromField(
-                                FIELD_TYPE_QUESTION,
-                                e.target.value,
-                                index
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label='answer' key={`answer ${index}`}>
-                          <Input
-                            placeholder='your answer here'
-                            onInput={(e) =>
-                              updateEntityFromField(
-                                FIELD_TYPE_ANSWER,
-                                e.target.value,
-                                index
-                              )
-                            }
-                          />
-                        </Form.Item>
-
-                        {fields.length === 1 ||
-                        index === fields.length - 1 ? null : (
-                          <Divider />
-                        )}
+                        <QuestionDivider index={index} />
+                        <QuestionTitle
+                          index={index}
+                          onClick={() => {
+                            setQuestionEntities(
+                              remove(index, index, questionEntities)
+                            )
+                            removeFromForm(field.name)
+                          }}
+                        />
+                        <QuestionInput
+                          field={field}
+                          index={index}
+                          onInput={(e) =>
+                            updateQuestionText(e.target.value, index)
+                          }
+                        />
+                        <AnswerInput
+                          index={index}
+                          onInput={(e) =>
+                            updateEntityFromField(
+                              FIELD_TYPE_ANSWER,
+                              e.target.value,
+                              index
+                            )
+                          }
+                        />
                       </div>
                     ))}
                     {/* TODO: disable this when the last question isn't finished*/}
-                    <Button type='dashed' onClick={() => add()}>
-                      Add question{' '}
+                    <Button
+                      type='dashed'
+                      onClick={() => add()}
+                      disabled={!addQuestionEnabled}
+                    >
+                      Add question
                     </Button>
                   </div>
                 )
@@ -195,4 +204,57 @@ export const CreateQuiz = () => {
       )}
     </PageLayout>
   )
+}
+
+const HowTo = () => (
+  <StyledCollapse>
+    <Collapse.Panel header='How to create a quiz'>
+      Add all your accepted answer with slashes in between. For example: If the
+      question was "How many sides does a rectangle have", the answer could be
+      "4/four".
+    </Collapse.Panel>
+  </StyledCollapse>
+)
+
+const FormNameInput = ({ setQuizAuthor, setQuizName }) => (
+  <>
+    <Form.Item label='your name'>
+      <Input
+        placeholder='your name here'
+        onChange={(e) => setQuizAuthor(e.target.value)}
+      />
+    </Form.Item>
+    <Form.Item label='quiz name'>
+      <Input
+        placeholder='name of quiz'
+        onChange={(e) => setQuizName(e.target.value)}
+      />
+    </Form.Item>
+  </>
+)
+
+const QuestionInput = ({ field, index, onInput }) => (
+  <Form.Item {...field} key={`question ${index}`} label='question'>
+    <Input placeholder='your question here' onInput={() => onInput()} />
+  </Form.Item>
+)
+
+const AnswerInput = ({ index, onInput }) => (
+  <Form.Item label='answer' key={`answer ${index}`}>
+    <Input placeholder='your answer here' onInput={() => onInput} />
+  </Form.Item>
+)
+
+const QuestionTitle = ({ index, onClick }) => (
+  <TitleAndRemoveContainer>
+    <Typography.Title level={3}>{`question ${index + 1}`}</Typography.Title>
+    <Button size='small' type='text' onClick={() => onClick()}>
+      Remove question
+    </Button>
+  </TitleAndRemoveContainer>
+)
+
+const QuestionDivider = ({ index }) => {
+  const isFirstQuestion = index === 0
+  return isFirstQuestion ? null : <Divider />
 }
