@@ -61,36 +61,9 @@ export const CreateQuiz = () => {
       }),
     })
 
-  const updateEntityFromField = (
-    fieldType = FIELD_TYPE_QUESTION,
-    input,
-    index
-  ) => {
-    const currentList = questionEntities
-    const shouldUpdateQuestion = fieldType === FIELD_TYPE_QUESTION
-    const shouldUpdateExtraInfo = fieldType === FIELD_TYPE_EXTRA_INFO
-    if (currentList[index]) {
-      const updated = {
-        ...currentList[index],
-        [shouldUpdateQuestion ? 'questionText' : 'acceptedAnswers']: input,
-      }
-      const updatedList = update(index, updated, currentList)
-      console.log({ updatedList })
-      setQuestionEntities(updatedList)
-    } else {
-      let newItem
-      if (shouldUpdateQuestion) {
-        newItem = { questionText: input, acceptedAnswers: '' }
-      } else {
-        newItem = { questionText: '', acceptedAnswers: input }
-      }
-      setQuestionEntities([...questionEntities, newItem])
-    }
-  }
-
   const updateQuestionText = (input, index) => {
     const currentList = questionEntities
-    const isNewQuestionEntity = length(currentList) - 1 === index
+    const isNewQuestionEntity = length(currentList) === index
 
     if (isNewQuestionEntity) {
       const newItem = {
@@ -106,6 +79,30 @@ export const CreateQuiz = () => {
       const updatedList = update(
         index,
         { questionText: input, acceptedAnswers, extraInfo },
+        currentList
+      )
+      setQuestionEntities(updatedList)
+    }
+  }
+
+  const updateAnswerText = (input, index) => {
+    const currentList = questionEntities
+    const isNewQuestionEntity = length(currentList) === index
+
+    if (isNewQuestionEntity) {
+      const newItem = {
+        questionText: '',
+        acceptedAnswers: input,
+        extraInfo: '',
+      }
+      const updatedList = append(newItem, currentList)
+      setQuestionEntities(updatedList)
+    } else {
+      const currentQuestionEntity = currentList[index]
+      const { questionText, extraInfo } = currentQuestionEntity
+      const updatedList = update(
+        index,
+        { questionText, acceptedAnswers: input, extraInfo },
         currentList
       )
       setQuestionEntities(updatedList)
@@ -162,19 +159,11 @@ export const CreateQuiz = () => {
                         <QuestionInput
                           field={field}
                           index={index}
-                          onInput={(e) =>
-                            updateQuestionText(e.target.value, index)
-                          }
+                          updateQuestionText={updateQuestionText}
                         />
                         <AnswerInput
                           index={index}
-                          onInput={(e) =>
-                            updateEntityFromField(
-                              FIELD_TYPE_ANSWER,
-                              e.target.value,
-                              index
-                            )
-                          }
+                          updateAnswerText={updateAnswerText}
                         />
                       </div>
                     ))}
@@ -233,15 +222,21 @@ const FormNameInput = ({ setQuizAuthor, setQuizName }) => (
   </>
 )
 
-const QuestionInput = ({ field, index, onInput }) => (
+const QuestionInput = ({ field, index, updateQuestionText }) => (
   <Form.Item {...field} key={`question ${index}`} label='question'>
-    <Input placeholder='your question here' onInput={() => onInput()} />
+    <Input
+      placeholder='your question here'
+      onInput={(e) => updateQuestionText(e.target.value, index)}
+    />
   </Form.Item>
 )
 
-const AnswerInput = ({ index, onInput }) => (
+const AnswerInput = ({ index, updateAnswerText }) => (
   <Form.Item label='answer' key={`answer ${index}`}>
-    <Input placeholder='your answer here' onInput={() => onInput} />
+    <Input
+      placeholder='your answer here'
+      onInput={(e) => updateAnswerText(e.target.value, index)}
+    />
   </Form.Item>
 )
 
