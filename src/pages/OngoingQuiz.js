@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import { Link, useHistory, useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
@@ -43,6 +44,7 @@ export const OngoingQuiz = () => {
   const [timerValue, startTimer, stopTimer] = useTimer()
   const [totalTime, setTotalTime] = useState(0)
   const [fetchingAnswer, setFetchingAnswer] = useState(false)
+  const [questionAndAnswerPairs, setQuestionAndAnswerPairs] = useState([])
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
   const inputFieldRef = useRef(null)
   const nextButtonRef = useRef(null)
@@ -112,6 +114,15 @@ export const OngoingQuiz = () => {
   }
 
   const goToNextQuestion = () => {
+    setQuestionAndAnswerPairs([
+      ...questionAndAnswerPairs,
+      {
+        question: currentQuestionText,
+        answer: userAnswer,
+        correctAnswer,
+        userAnswerWasCorrect,
+      },
+    ])
     const nextIndex = currentQuestionIndex + 1
     if (nextIndex >= questions.length) {
       setQuizFinished(true)
@@ -140,6 +151,7 @@ export const OngoingQuiz = () => {
           totalTime={totalTime}
           numberOfQuestions={questions.length}
           resetQuiz={resetQuiz}
+          questionAndAnswerPairs={questionAndAnswerPairs}
         />
       </PageLayout>
     )
@@ -226,9 +238,10 @@ const QuizFinished = ({
   totalTime,
   numberOfQuestions,
   resetQuiz,
+  questionAndAnswerPairs,
 }) => (
   <>
-    <Typography.Title level={3}>Quiz finished!</Typography.Title>
+    <Typography.Title level={2}>Quiz finished!</Typography.Title>
     <Space direction='vertical' align='center'>
       <Typography.Text>
         Correct answers: {correctCounter}/{numberOfQuestions} (
@@ -243,6 +256,36 @@ const QuizFinished = ({
       <Button type='primary'>
         <Link to='/quiz/list'>Go back to quiz list</Link>
       </Button>
+    </Space>
+
+    <Typography.Title level={3}>Quiz summary</Typography.Title>
+    <Space direction='vertical' align='start'>
+      {questionAndAnswerPairs.map((it, ix) => {
+        return (
+          <Space direction='vertical' align='start' key={it.question}>
+            <Typography.Text>{`${ix + 1}. ${it.question}`}</Typography.Text>
+            <Space direction='horizontal'>
+              <>
+                {it.userAnswerWasCorrect ? (
+                  <CheckCircleFilled style={{ color: 'lightgreen' }} />
+                ) : (
+                  <CloseCircleFilled style={{ color: 'tomato' }} />
+                )}
+              </>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography.Text>
+                  Your answer: {it.answer || '-'}
+                </Typography.Text>
+                {!it.userAnswerWasCorrect && (
+                  <Typography.Text>
+                    Correct answer: {it.correctAnswer}
+                  </Typography.Text>
+                )}
+              </div>
+            </Space>
+          </Space>
+        )
+      })}
     </Space>
   </>
 )
