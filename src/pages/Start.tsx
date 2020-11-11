@@ -19,23 +19,21 @@ const Title = styled(Typography.Title)`
   align-items: center;
 `
 
-export default function Start() {
+export default function Start(): JSX.Element {
   return (
     <PageLayout>
-      <Space direction='vertical'>
+      <Space direction="vertical">
         <Title>qviz</Title>
         <StyledSpace>
           <Typography.Text>Press this button to the quiz list</Typography.Text>
-          <Button type='primary'>
-            <Link to='/quiz/list'>Press here please</Link>
+          <Button type="primary">
+            <Link to="/quiz/list">Press here please</Link>
           </Button>
         </StyledSpace>
         <StyledSpace>
-          <Typography.Text>
-            Press this button to create a new quiz
-          </Typography.Text>
-          <Button type='primary'>
-            <Link to='/create-quiz'>Create new</Link>
+          <Typography.Text>Press this button to create a new quiz</Typography.Text>
+          <Button type="primary">
+            <Link to="/create-quiz">Create new</Link>
           </Button>
         </StyledSpace>
       </Space>

@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { WINDOW_SIZES } from '../constants'
 
 export const useWindowWidth = () => {
-  const [size, setSize] = useState('')
+  const [size, setSize] = useState<number>(0)
   const [isSm, setIsSm] = useState(false)
   const [isMd, setIsMd] = useState(false)
-  const [isLg, seIsLg] = useState(false)
+  const [isLg, setIsLg] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,17 +21,17 @@ export const useWindowWidth = () => {
     if (size <= WINDOW_SIZES.sm) {
       setIsSm(true)
       setIsMd(false)
-      setIsMd(false)
+      setIsLg(false)
     }
     if (size <= WINDOW_SIZES.md) {
       setIsSm(false)
       setIsMd(true)
-      setIsMd(false)
+      setIsLg(false)
     }
     if (size <= WINDOW_SIZES.lg) {
       setIsSm(false)
       setIsMd(false)
-      setIsMd(true)
+      setIsLg(true)
     }
   }, [size])
 

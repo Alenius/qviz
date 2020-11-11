@@ -11,16 +11,16 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path='/create-quiz'>
+        <Route path="/create-quiz">
           <CreateQuiz />
         </Route>
-        <Route path='/quiz/id=:id'>
+        <Route path="/quiz/id=:id">
           <OngoingQuiz />
         </Route>
-        <Route path='/quiz/list'>
+        <Route path="/quiz/list">
           <QuizList />
         </Route>
-        <Route path='/'>
+        <Route path="/">
           <Start />
         </Route>
       </Switch>

@@ -38,7 +38,13 @@ const Content = styled.div`
 
 const Footer = styled.div``
 
-export const PageLayout = ({ children, headerTitle, headerSubtitle }) => {
+interface Props {
+  children: JSX.Element | JSX.Element[]
+  headerTitle?: string
+  headerSubtitle?: string
+}
+
+export const PageLayout = ({ children, headerTitle, headerSubtitle }: Props) => {
   const navHistory = useHistory()
 
   return (
@@ -49,7 +55,7 @@ export const PageLayout = ({ children, headerTitle, headerSubtitle }) => {
             <PageHeader
               title={headerTitle}
               subTitle={headerSubtitle}
-              backIcon={<ArrowLeftOutlined color='white' />}
+              backIcon={<ArrowLeftOutlined color="white" />}
               onBack={() => navHistory.goBack()}
             />
           ) : null}
