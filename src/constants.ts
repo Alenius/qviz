@@ -15,3 +15,5 @@ export const WINDOW_SIZES_PX: ReturnObjectType = Object.entries(WINDOW_SIZES).re
   const [key, value]: [string, WINDOW_SIZES] = keyValuePair as [string, WINDOW_SIZES]
   return { ...acc, [key]: `${value}px` }
 }, {} as ReturnObjectType)
+
+export const publicUrl = 'https://qviz-be.herokuapp.com'
