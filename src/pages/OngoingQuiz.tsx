@@ -5,7 +5,7 @@ import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
-import { formatTimerString, getApiURL } from '../utils'
+import { camelizeKeys, formatTimerString, getApiURL } from '../utils'
 import { useTimer } from '../hooks/useTimer'
 import { Question, Answer, UnformattedQuestion } from 'typings'
 
@@ -15,27 +15,10 @@ const StyledForm = styled(Form)`
 
 const apiURL = getApiURL()
 
-const toCamel = (s: string): string => {
-  return s.replace(/([-_][a-z])/gi, ($1) => {
-    return $1.toUpperCase().replace('_', '')
-  })
-}
-const formatQuestions = (unformattedQuestions: UnformattedQuestion[]): Question[] => {
-  // map over all questions
-  const formattedQuestions = unformattedQuestions.map((unformattedQuestion) => {
-    // map over entries in the question entity
-    return Object.entries(unformattedQuestion).reduce((acc, [key, value]) => {
-      return { ...acc, [toCamel(key)]: value }
-    }, {})
-  }) as unknown // TODO: this can probably be done nicer
-
-  return formattedQuestions as Question[]
-}
-
 const getQuestions = async (quizId: string): Promise<{ questions: Question[]; quizName: string }> => {
   const res = await fetch(`${apiURL}/questions?quizId=${quizId}`)
   const { questions: unformattedQuestions, quizName } = await res.json()
-  const formattedQuestions = formatQuestions(unformattedQuestions)
+  const formattedQuestions = camelizeKeys<UnformattedQuestion, Question>(unformattedQuestions)
   return { questions: formattedQuestions, quizName }
 }
 
