@@ -32,6 +32,12 @@ interface QuestionAnswerEntity {
   extraInfo: string
 }
 
+enum FieldType {
+  Question = 'Question',
+  Answer = 'Answer',
+  ExtraInfo = 'ExtraInfo',
+}
+
 export const CreateQuiz = (): JSX.Element => {
   const [questionEntities, setQuestionEntities] = useState<QuestionAnswerEntity[]>([])
   const [quizName, setQuizName] = useState('')
@@ -39,6 +45,7 @@ export const CreateQuiz = (): JSX.Element => {
   const [loading, setLoading] = useState(false)
   const [quizSubmitted, setQuizSubmitted] = useState(false)
   const [addQuestionEnabled, setAddQuestionEnabled] = useState(false)
+  const [isCurrentlyEditing, setIsCurrentlyEditing] = useState<FieldType | null>(null)
 
   useEffect(() => {
     const lastQuestionEntity = last(questionEntities)
@@ -64,42 +71,62 @@ export const CreateQuiz = (): JSX.Element => {
       }),
     })
 
-  const updateQuestionText = (input: string, index: number) => {
-    const currentList = questionEntities
-    const isNewQuestionEntity = length(currentList) === index
-
-    if (isNewQuestionEntity) {
-      const newItem = {
-        questionText: input,
-        acceptedAnswers: '',
-        extraInfo: '',
-      }
-      const updatedList = append(newItem, currentList)
-      setQuestionEntities(updatedList)
-    } else {
-      const currentQuestionEntity = currentList[index]
-      const { acceptedAnswers, extraInfo } = currentQuestionEntity
-      const updatedList = update(index, { questionText: input, acceptedAnswers, extraInfo }, currentList)
-      setQuestionEntities(updatedList)
+  const createNewItem = (input: string): QuestionAnswerEntity => {
+    switch (isCurrentlyEditing) {
+      case FieldType.Question:
+        return {
+          questionText: input,
+          acceptedAnswers: '',
+          extraInfo: '',
+        }
+      case FieldType.Answer:
+        return {
+          questionText: '',
+          acceptedAnswers: input,
+          extraInfo: '',
+        }
+      case FieldType.Answer:
+        return {
+          questionText: '',
+          acceptedAnswers: '',
+          extraInfo: input,
+        }
+      default:
+        throw new Error(`Invalid field type, this should never happen: fieldType: ${isCurrentlyEditing}`)
     }
   }
 
-  const updateAnswerText = (input: string, index: number) => {
+  const updateEntity = (input: string, currentQuestionEntity: QuestionAnswerEntity): QuestionAnswerEntity => {
+    switch (isCurrentlyEditing) {
+      case FieldType.Question: {
+        return { ...currentQuestionEntity, questionText: input }
+      }
+      case FieldType.Answer: {
+        return { ...currentQuestionEntity, acceptedAnswers: input }
+      }
+      case FieldType.ExtraInfo: {
+        return { ...currentQuestionEntity, extraInfo: input }
+      }
+      default:
+        throw new Error(`Invalid field type, this should never happen ${isCurrentlyEditing}`)
+    }
+  }
+
+  const updateFieldText = (input: string, index: number) => {
     const currentList = questionEntities
     const isNewQuestionEntity = length(currentList) === index
 
+    if (!isCurrentlyEditing)
+      throw Error(`No field is currently being edited, this should never happen: ${isCurrentlyEditing}`)
+
     if (isNewQuestionEntity) {
-      const newItem = {
-        questionText: '',
-        acceptedAnswers: input,
-        extraInfo: '',
-      }
+      const newItem = createNewItem(input)
       const updatedList = append(newItem, currentList)
       setQuestionEntities(updatedList)
     } else {
       const currentQuestionEntity = currentList[index]
-      const { questionText, extraInfo } = currentQuestionEntity
-      const updatedList = update(index, { questionText, acceptedAnswers: input, extraInfo }, currentList)
+      const updatedEntity = updateEntity(input, currentQuestionEntity)
+      const updatedList = update(index, updatedEntity, currentList)
       setQuestionEntities(updatedList)
     }
   }
@@ -146,8 +173,25 @@ export const CreateQuiz = (): JSX.Element => {
                             removeFromForm(field.name)
                           }}
                         />
-                        <QuestionInput field={field} index={index} updateQuestionText={updateQuestionText} />
-                        <AnswerInput index={index} updateAnswerText={updateAnswerText} />
+                        <QuestionInput
+                          field={field}
+                          index={index}
+                          onFocus={() => {
+                            setIsCurrentlyEditing(FieldType.Question)
+                            console.log('hello')
+                          }}
+                          updateField={updateFieldText}
+                        />
+                        <AnswerInput
+                          index={index}
+                          onFocus={() => setIsCurrentlyEditing(FieldType.Answer)}
+                          updateField={updateFieldText}
+                        />
+                        <ExtraInfoInput
+                          index={index}
+                          onFocus={() => setIsCurrentlyEditing(FieldType.ExtraInfo)}
+                          updateField={updateFieldText}
+                        />
                       </div>
                     ))}
                     {/* TODO: disable this when the last question isn't finished*/}
@@ -197,27 +241,47 @@ const FormNameInput = ({ setQuizAuthor, setQuizName }: FormNameInputProps) => (
 interface QuestionInputProps {
   field: FormListFieldData
   index: number
-  updateQuestionText: (value: string, index: number) => void
+  updateField: (value: string, index: number) => void
+  onFocus: () => void
 }
-const QuestionInput = ({ field, index, updateQuestionText }: QuestionInputProps) => (
+const QuestionInput = ({ field, index, onFocus, updateField }: QuestionInputProps) => (
   <Form.Item {...field} key={`question ${index}`} label="question">
     <Input
       placeholder="your question here"
-      onInput={(e) => updateQuestionText((e.target as HTMLInputElement).value, index)}
+      onFocus={onFocus}
+      onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
     />
   </Form.Item>
 )
 
 interface AnswerInputProps {
   index: number
-  updateAnswerText: (value: string, index: number) => void
+  updateField: (value: string, index: number) => void
+  onFocus: () => void
 }
 
-const AnswerInput = ({ index, updateAnswerText }: AnswerInputProps) => (
+const AnswerInput = ({ index, onFocus, updateField }: AnswerInputProps) => (
   <Form.Item label="answer" key={`answer ${index}`}>
     <Input
       placeholder="your answer here"
-      onInput={(e) => updateAnswerText((e.target as HTMLInputElement).value, index)}
+      onFocus={onFocus}
+      onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
+    />
+  </Form.Item>
+)
+
+interface ExtraInfoInputProps {
+  index: number
+  updateField: (value: string, index: number) => void
+  onFocus: () => void
+}
+
+const ExtraInfoInput = ({ index, onFocus, updateField }: ExtraInfoInputProps) => (
+  <Form.Item label="extra info" key={`answer ${index}`}>
+    <Input
+      placeholder="extra information about the question or the answer"
+      onFocus={onFocus}
+      onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
     />
   </Form.Item>
 )
