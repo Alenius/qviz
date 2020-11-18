@@ -2,3 +2,6 @@
 - add time limit
 - fix local environment
 - adding newlines to inputs (especially in createQuiz)
+- fix extra info in backend, right now returning the string 'undefined'
+- center 'Send Answer' button in ongoing quiz
+- fix multilining of question texts in ongoing quiz
