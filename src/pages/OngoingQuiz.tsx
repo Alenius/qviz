@@ -34,6 +34,8 @@ interface QuestionAnswerPair {
   userAnswerWasCorrect: boolean
 }
 
+type QuizState = 'NotStarted' | 'Answering' | 'Reviewing' | 'Finished'
+
 export const OngoingQuiz = (): JSX.Element => {
   const { id }: { id: string } = useParams()
   const [questions, setQuestions] = useState<Question[]>([])
@@ -41,12 +43,9 @@ export const OngoingQuiz = (): JSX.Element => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
   const [currentQuestionText, setCurrentQuestionText] = useState('')
   const [userAnswer, setUserAnswer] = useState('')
-  const [quizStarted, setQuizStarted] = useState(false)
-  const [questionAnswered, setQuestionAnswered] = useState(false)
   const [correctAnswer, setCorrectAnswer] = useState('')
   const [userAnswerWasCorrect, setUserAnswerWasCorrect] = useState(false)
   const [correctCounter, setCorrectCounter] = useState(0)
-  const [quizFinished, setQuizFinished] = useState(false)
   const [bonusText, setBonusText] = useState('')
   const [timerValue, startTimer, stopTimer] = useTimer()
   const [totalTime, setTotalTime] = useState(0)
@@ -55,6 +54,7 @@ export const OngoingQuiz = (): JSX.Element => {
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
   const inputFieldRef = useRef<Input>(null)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
+  const [quizState, setQuizState] = useState<QuizState>('NotStarted')
 
   useEffect(() => {
     const getQuestionsAsync = async () => {
@@ -92,27 +92,25 @@ export const OngoingQuiz = (): JSX.Element => {
   const resetQuiz = () => {
     setCurrentQuestionIndex(0)
     setUserAnswer('')
-    setQuestionAnswered(false)
-    setQuizStarted(true)
-    setQuizFinished(false)
     setTotalTime(0)
     setCorrectCounter(0)
+    setQuizState('NotStarted')
   }
 
   const handleStartClick = () => {
-    setQuizStarted(true)
+    setQuizState('Answering')
     setCurrentQuestionIndex(0)
     startTimer()
   }
 
-  interface OnFinishProps {
+  interface OnAnswerProps {
     answer: string
   }
 
-  const handleOnFinish = async (values: OnFinishProps) => {
+  const handleOnAnswer = async (values: OnAnswerProps) => {
+    setQuizState('Reviewing')
     const { answer } = values
     setUserAnswer(answer)
-    setQuestionAnswered(true)
     stopTimer()
     const questionId = questions[currentQuestionIndex].id
     await fetchAnswer(questionId, answer)
@@ -131,16 +129,16 @@ export const OngoingQuiz = (): JSX.Element => {
     ])
     const nextIndex = currentQuestionIndex + 1
     if (nextIndex >= questions.length) {
-      setQuizFinished(true)
+      setQuizState('Finished')
     } else {
-      setQuestionAnswered(false)
+      setQuizState('Answering')
       setUserAnswer('')
       setCurrentQuestionIndex(nextIndex)
       startTimer()
     }
   }
 
-  if (!quizStarted) {
+  if (quizState === 'NotStarted') {
     return (
       <PageLayout headerTitle={quizName}>
         <QuizStart handleStartClick={handleStartClick} />
@@ -148,7 +146,7 @@ export const OngoingQuiz = (): JSX.Element => {
     )
   }
 
-  if (quizFinished) {
+  if (quizState === 'Finished') {
     return (
       <PageLayout headerTitle={quizName}>
         <QuizFinished
@@ -162,7 +160,7 @@ export const OngoingQuiz = (): JSX.Element => {
     )
   }
 
-  if (questionAnswered) {
+  if (quizState === 'Reviewing') {
     return (
       <PageLayout headerTitle={quizName}>
         <Space direction="vertical" align="center">
@@ -191,26 +189,31 @@ export const OngoingQuiz = (): JSX.Element => {
       </PageLayout>
     )
   }
-  return (
-    <PageLayout headerTitle={quizName}>
-      <Typography.Title level={5}>
-        Question {currentQuestionIndex + 1} of {questions.length}
-      </Typography.Title>
-      <StyledForm onFinish={(values) => handleOnFinish(values as OnFinishProps)}>
-        <Form.Item label="question">
-          <Typography.Text>{currentQuestionText}</Typography.Text>
-        </Form.Item>
-        <Form.Item label="answer" name="answer">
-          <Input type="text" title="answer" autoComplete="off" ref={inputFieldRef} />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" onChange={(e) => console.log({ e })}>
-            Send answer
-          </Button>
-        </Form.Item>
-      </StyledForm>
-    </PageLayout>
-  )
+
+  if (quizState === 'Answering') {
+    return (
+      <PageLayout headerTitle={quizName}>
+        <Typography.Title level={5}>
+          Question {currentQuestionIndex + 1} of {questions.length}
+        </Typography.Title>
+        <StyledForm onFinish={(values) => handleOnAnswer(values as OnAnswerProps)}>
+          <Form.Item label="question">
+            <Typography.Text>{currentQuestionText}</Typography.Text>
+          </Form.Item>
+          <Form.Item label="answer" name="answer">
+            <Input type="text" title="answer" autoComplete="off" ref={inputFieldRef} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Send answer
+            </Button>
+          </Form.Item>
+        </StyledForm>
+      </PageLayout>
+    )
+  }
+
+  return <Spin />
 }
 
 interface QuizStartProps {
