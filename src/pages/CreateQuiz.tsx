@@ -32,11 +32,7 @@ interface QuestionAnswerEntity {
   extraInfo: string
 }
 
-enum FieldType {
-  Question = 'Question',
-  Answer = 'Answer',
-  ExtraInfo = 'ExtraInfo',
-}
+type FieldType = 'Question' | 'Answer' | 'ExtraInfo'
 
 export const CreateQuiz = (): JSX.Element => {
   const [questionEntities, setQuestionEntities] = useState<QuestionAnswerEntity[]>([])
@@ -73,19 +69,19 @@ export const CreateQuiz = (): JSX.Element => {
 
   const createNewItem = (input: string): QuestionAnswerEntity => {
     switch (isCurrentlyEditing) {
-      case FieldType.Question:
+      case 'Question':
         return {
           questionText: input,
           acceptedAnswers: '',
           extraInfo: '',
         }
-      case FieldType.Answer:
+      case 'Answer':
         return {
           questionText: '',
           acceptedAnswers: input,
           extraInfo: '',
         }
-      case FieldType.Answer:
+      case 'ExtraInfo':
         return {
           questionText: '',
           acceptedAnswers: '',
@@ -98,13 +94,13 @@ export const CreateQuiz = (): JSX.Element => {
 
   const updateEntity = (input: string, currentQuestionEntity: QuestionAnswerEntity): QuestionAnswerEntity => {
     switch (isCurrentlyEditing) {
-      case FieldType.Question: {
+      case 'Question': {
         return { ...currentQuestionEntity, questionText: input }
       }
-      case FieldType.Answer: {
+      case 'Answer': {
         return { ...currentQuestionEntity, acceptedAnswers: input }
       }
-      case FieldType.ExtraInfo: {
+      case 'ExtraInfo': {
         return { ...currentQuestionEntity, extraInfo: input }
       }
       default:
@@ -177,19 +173,19 @@ export const CreateQuiz = (): JSX.Element => {
                           field={field}
                           index={index}
                           onFocus={() => {
-                            setIsCurrentlyEditing(FieldType.Question)
+                            setIsCurrentlyEditing('Question')
                             console.log('hello')
                           }}
                           updateField={updateFieldText}
                         />
                         <AnswerInput
                           index={index}
-                          onFocus={() => setIsCurrentlyEditing(FieldType.Answer)}
+                          onFocus={() => setIsCurrentlyEditing('Answer')}
                           updateField={updateFieldText}
                         />
                         <ExtraInfoInput
                           index={index}
-                          onFocus={() => setIsCurrentlyEditing(FieldType.ExtraInfo)}
+                          onFocus={() => setIsCurrentlyEditing('ExtraInfo')}
                           updateField={updateFieldText}
                         />
                       </div>
