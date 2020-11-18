@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
-import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
 import { camelizeKeys, formatTimerString, getApiURL } from '../utils'
 import { useTimer } from '../hooks/useTimer'
 import { Question, Answer, UnformattedQuestion } from 'typings'
+import QuizStart from 'components/QuizStart'
+import QuizFinished from 'components/QuizFinished'
 
 const StyledForm = styled(Form)`
   max-width: 800px;
@@ -27,26 +28,37 @@ const checkAnswer = async (questionId: string, userAnswer: string): Promise<Answ
   return res.json()
 }
 
-interface QuestionAnswerPair {
+export interface QuestionAnswerPair {
   question: string
   answer: string
   correctAnswer: string
   userAnswerWasCorrect: boolean
 }
 
+interface AnswerEntity {
+  correctAnswer: string
+  userAnswerWasCorrect: boolean
+  bonusText: string
+}
+
+const initialAnswerEntity: AnswerEntity = {
+  correctAnswer: '',
+  userAnswerWasCorrect: false,
+  bonusText: '',
+}
+
 type QuizState = 'NotStarted' | 'Answering' | 'Reviewing' | 'Finished'
 
 export const OngoingQuiz = (): JSX.Element => {
   const { id }: { id: string } = useParams()
+  const [quizState, setQuizState] = useState<QuizState>('NotStarted')
   const [questions, setQuestions] = useState<Question[]>([])
   const [quizName, setQuizName] = useState('')
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
   const [currentQuestionText, setCurrentQuestionText] = useState('')
   const [userAnswer, setUserAnswer] = useState('')
-  const [correctAnswer, setCorrectAnswer] = useState('')
-  const [userAnswerWasCorrect, setUserAnswerWasCorrect] = useState(false)
   const [correctCounter, setCorrectCounter] = useState(0)
-  const [bonusText, setBonusText] = useState('')
+  const [answerEntity, setAnswerEntity] = useState<AnswerEntity>(initialAnswerEntity)
   const [timerValue, startTimer, stopTimer] = useTimer()
   const [totalTime, setTotalTime] = useState(0)
   const [fetchingAnswer, setFetchingAnswer] = useState(false)
@@ -54,7 +66,6 @@ export const OngoingQuiz = (): JSX.Element => {
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
   const inputFieldRef = useRef<Input>(null)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
-  const [quizState, setQuizState] = useState<QuizState>('NotStarted')
 
   useEffect(() => {
     const getQuestionsAsync = async () => {
@@ -81,11 +92,8 @@ export const OngoingQuiz = (): JSX.Element => {
   const fetchAnswer = async (questionId: string, userAnswer: string) => {
     setFetchingAnswer(true)
     const { correctAnswer, userAnswerWasCorrect, extraInfo } = await checkAnswer(questionId, userAnswer)
-
-    setCorrectAnswer(correctAnswer)
-    setUserAnswerWasCorrect(userAnswerWasCorrect)
+    setAnswerEntity({ correctAnswer, userAnswerWasCorrect, bonusText: extraInfo === 'undefined' ? '' : extraInfo })
     setFetchingAnswer(false)
-    extraInfo && setBonusText(extraInfo)
     userAnswerWasCorrect && setCorrectCounter(correctCounter + 1)
   }
 
@@ -123,8 +131,8 @@ export const OngoingQuiz = (): JSX.Element => {
       {
         question: currentQuestionText,
         answer: userAnswer,
-        correctAnswer,
-        userAnswerWasCorrect,
+        correctAnswer: answerEntity.correctAnswer,
+        userAnswerWasCorrect: answerEntity.userAnswerWasCorrect,
       },
     ])
     const nextIndex = currentQuestionIndex + 1
@@ -169,14 +177,14 @@ export const OngoingQuiz = (): JSX.Element => {
             <Spin />
           ) : (
             <Space direction="vertical" align="center">
-              <CorrectedAnswer userAnswerWasCorrect={userAnswerWasCorrect} />
+              <CorrectedAnswer userAnswerWasCorrect={answerEntity.userAnswerWasCorrect} />
               <Typography.Text>Your answer: {userAnswer}</Typography.Text>
-              <Typography.Text>Correct answer: {correctAnswer}</Typography.Text>
-              {bonusText !== 'undefined' && (
+              <Typography.Text>Correct answer: {answerEntity.correctAnswer}</Typography.Text>
+              {answerEntity.bonusText && (
                 <Typography.Text>
-                  More info:{' '}
+                  More info:
                   {
-                    bonusText // TODO: Fix this in the backend
+                    answerEntity.bonusText // TODO: Fix this in the backend
                   }
                 </Typography.Text>
               )}
@@ -215,76 +223,6 @@ export const OngoingQuiz = (): JSX.Element => {
 
   return <Spin />
 }
-
-interface QuizStartProps {
-  handleStartClick: () => void
-}
-
-const QuizStart = ({ handleStartClick }: QuizStartProps) => (
-  <Space direction="vertical" align="center">
-    <Typography.Text>When you feel ready, press the button below to start</Typography.Text>
-    <Button type="primary" onClick={() => handleStartClick()} style={{ maxWidth: '100px' }}>
-      Start quiz
-    </Button>
-  </Space>
-)
-
-interface QuizFinishedProps {
-  correctCounter: number
-  totalTime: number
-  numberOfQuestions: number
-  resetQuiz: () => void
-  questionAndAnswerPairs: QuestionAnswerPair[]
-}
-
-const QuizFinished = ({
-  correctCounter,
-  totalTime,
-  numberOfQuestions,
-  resetQuiz,
-  questionAndAnswerPairs,
-}: QuizFinishedProps) => (
-  <>
-    <Typography.Title level={2}>Quiz finished!</Typography.Title>
-    <Space direction="vertical" align="center">
-      <Typography.Text>
-        Correct answers: {correctCounter}/{numberOfQuestions} ({Math.round((correctCounter / numberOfQuestions) * 100)}
-        %)
-      </Typography.Text>
-      <Typography.Text>Total time: {formatTimerString(totalTime)}</Typography.Text>
-      <Button type="primary" onClick={() => resetQuiz()}>
-        Play this quiz again
-      </Button>
-      <Button type="primary">
-        <Link to="/quiz/list">Go back to quiz list</Link>
-      </Button>
-    </Space>
-
-    <Typography.Title level={3}>Quiz summary</Typography.Title>
-    <Space direction="vertical" align="start">
-      {questionAndAnswerPairs.map((it, ix) => {
-        return (
-          <Space direction="vertical" align="start" key={it.question}>
-            <Typography.Text>{`${ix + 1}. ${it.question}`}</Typography.Text>
-            <Space direction="horizontal">
-              <>
-                {it.userAnswerWasCorrect ? (
-                  <CheckCircleFilled style={{ color: 'lightgreen' }} />
-                ) : (
-                  <CloseCircleFilled style={{ color: 'tomato' }} />
-                )}
-              </>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography.Text>Your answer: {it.answer || '-'}</Typography.Text>
-                {!it.userAnswerWasCorrect && <Typography.Text>Correct answer: {it.correctAnswer}</Typography.Text>}
-              </div>
-            </Space>
-          </Space>
-        )
-      })}
-    </Space>
-  </>
-)
 
 interface CorrectedAnswerProps {
   userAnswerWasCorrect: boolean
