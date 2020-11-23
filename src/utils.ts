@@ -2,12 +2,11 @@ import { isEmpty } from 'ramda'
 import { publicUrl } from './constants'
 export const getApiURL = (port = 4000) => {
   const localhostUrl = `http://localhost:${port}`
-  if (process.env.REACT_APP_RUN_LOCALLY === 'true') {
+  if (process.env.NODE_ENV === 'development') {
     return localhostUrl
   } else {
     return publicUrl
   }
-  // return isLocalhost ? localhostUrl : publicUrl
 }
 
 const format = (time: number) => {
