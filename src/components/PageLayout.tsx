@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Layout, PageHeader } from 'antd'
+import { Layout, PageHeader, Skeleton, Spin } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { WINDOW_SIZES_PX } from '../constants'
@@ -51,14 +51,12 @@ export const PageLayout = ({ children, headerTitle, headerSubtitle }: Props) => 
     <BaseLayout style={{ minHeight: '100vh' }}>
       <StyledLayout>
         <Header>
-          {headerTitle ? (
-            <PageHeader
-              title={headerTitle}
-              subTitle={headerSubtitle}
-              backIcon={<ArrowLeftOutlined color="white" />}
-              onBack={() => navHistory.goBack()}
-            />
-          ) : null}
+          <PageHeader
+            title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
+            subTitle={headerSubtitle}
+            backIcon={<ArrowLeftOutlined color="white" />}
+            onBack={() => navHistory.goBack()}
+          />
         </Header>
         <Content>{children}</Content>
       </StyledLayout>
