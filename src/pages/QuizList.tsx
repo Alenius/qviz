@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { List, Card } from 'antd'
+import { List, Card, Spin } from 'antd'
 import { PageLayout } from '../components/PageLayout'
 import { Link } from 'react-router-dom'
 import { getApiURL } from '../utils'
@@ -14,14 +14,24 @@ const getQuestionList = async (): Promise<Quiz[]> => {
 
 function QuizList(): JSX.Element {
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getQuestionListAsync = async () => {
       const fetchedQuestionList = await getQuestionList()
       setQuizList(fetchedQuestionList)
+      setLoading(false)
     }
     getQuestionListAsync()
   }, [])
+
+  if (loading) {
+    return (
+      <PageLayout headerTitle="quiz list">
+        <Spin size="large" />
+      </PageLayout>
+    )
+  }
 
   return (
     <PageLayout headerTitle="quiz list">
