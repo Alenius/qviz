@@ -5,3 +5,4 @@
 - fix extra info in backend, right now returning the string 'undefined'
 - center 'Send Answer' button in ongoing quiz
 - fix multilining of question texts in ongoing quiz
+- add loading for quiz page
