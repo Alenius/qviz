@@ -21,7 +21,7 @@ const Title = styled(Typography.Title)`
 
 export default function Start(): JSX.Element {
   return (
-    <PageLayout>
+    <PageLayout disableHeaderTitle={true}>
       <Space direction="vertical">
         <Title>qviz</Title>
         <StyledSpace>

@@ -42,21 +42,29 @@ interface Props {
   children: JSX.Element | JSX.Element[]
   headerTitle?: string
   headerSubtitle?: string
+  disableHeaderTitle?: boolean
 }
 
-export const PageLayout = ({ children, headerTitle, headerSubtitle }: Props) => {
+export const PageLayout = ({
+  children,
+  headerTitle,
+  headerSubtitle,
+  disableHeaderTitle = false,
+}: Props): JSX.Element => {
   const navHistory = useHistory()
 
   return (
     <BaseLayout style={{ minHeight: '100vh' }}>
       <StyledLayout>
         <Header>
-          <PageHeader
-            title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
-            subTitle={headerSubtitle}
-            backIcon={<ArrowLeftOutlined color="white" />}
-            onBack={() => navHistory.goBack()}
-          />
+          {!disableHeaderTitle && (
+            <PageHeader
+              title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
+              subTitle={headerSubtitle}
+              backIcon={<ArrowLeftOutlined color="white" />}
+              onBack={() => navHistory.goBack()}
+            />
+          )}
         </Header>
         <Content>{children}</Content>
       </StyledLayout>
