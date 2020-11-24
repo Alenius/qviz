@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PageLayout } from '../components/PageLayout'
-import { Typography, Collapse, Input, Form, Button, Divider, Spin } from 'antd'
+import { Typography, Collapse, Input, Form, Button, Divider, Spin, Space } from 'antd'
 import styled from 'styled-components'
 import { update, remove, last, length, append } from 'ramda'
 import { getApiURL } from '../utils'
@@ -242,10 +242,13 @@ interface QuestionInputProps {
 }
 const QuestionInput = ({ field, index, onFocus, updateField }: QuestionInputProps) => (
   <Form.Item {...field} key={`question ${index}`} label="question">
-    <Input
+    <Input.TextArea
+      autoSize={{ minRows: 1, maxRows: 6 }}
       placeholder="your question here"
       onFocus={onFocus}
       onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
+      maxLength={512}
+      showCount
     />
   </Form.Item>
 )
@@ -257,7 +260,8 @@ interface AnswerInputProps {
 }
 
 const AnswerInput = ({ index, onFocus, updateField }: AnswerInputProps) => (
-  <Form.Item label="answer" key={`answer ${index}`}>
+  // the 22 px padding is because of the character count on quetsion and extra info
+  <Form.Item label="answer" key={`answer ${index}`} style={{ paddingBottom: '22px' }}>
     <Input
       placeholder="your answer here"
       onFocus={onFocus}
@@ -274,10 +278,13 @@ interface ExtraInfoInputProps {
 
 const ExtraInfoInput = ({ index, onFocus, updateField }: ExtraInfoInputProps) => (
   <Form.Item label="extra info" key={`answer ${index}`}>
-    <Input
+    <Input.TextArea
+      autoSize={{ minRows: 1, maxRows: 10 }}
       placeholder="extra information about the question or the answer"
       onFocus={onFocus}
       onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
+      showCount
+      maxLength={1024}
     />
   </Form.Item>
 )
