@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PageLayout } from '../components/PageLayout'
-import { Typography, Collapse, Input, Form, Button, Divider, Spin, Space } from 'antd'
+import { Typography, Collapse, Input, Form, Button, Divider, Spin } from 'antd'
 import styled from 'styled-components'
 import { update, remove, last, length, append } from 'ramda'
 import { getApiURL } from '../utils'
@@ -54,7 +54,7 @@ export const CreateQuiz = (): JSX.Element => {
     }
   }, [questionEntities])
 
-  const fetchAnswers = async (quizName: string, quizAuthor: string, questionEntities: QuestionAnswerEntity[]) =>
+  const submitQuiz = async (quizName: string, quizAuthor: string, questionEntities: QuestionAnswerEntity[]) =>
     fetch(`${apiUrl}/quiz`, {
       method: 'POST',
       headers: {
@@ -130,7 +130,7 @@ export const CreateQuiz = (): JSX.Element => {
   const onFinish = async () => {
     setLoading(true)
     try {
-      await fetchAnswers(quizName, quizAuthor, questionEntities)
+      await submitQuiz(quizName, quizAuthor, questionEntities)
       setLoading(false)
       setQuizSubmitted(true)
     } catch (err) {
@@ -247,7 +247,7 @@ const QuestionInput = ({ field, index, onFocus, updateField }: QuestionInputProp
       placeholder="your question here"
       onFocus={onFocus}
       onInput={(e) => updateField((e.target as HTMLInputElement).value, index)}
-      maxLength={512}
+      maxLength={256}
       showCount
     />
   </Form.Item>
