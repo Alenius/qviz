@@ -217,7 +217,13 @@ export const OngoingQuiz = (): JSX.Element => {
             <Typography.Text>{currentQuestionText}</Typography.Text>
           </Form.Item>
           <Form.Item label="answer" name="answer">
-            <Input type="text" title="answer" autoComplete="off" ref={inputFieldRef} />
+            <Input
+              type="text"
+              title="answer"
+              autoComplete="off"
+              ref={inputFieldRef}
+              style={{ fontSizeAdjust: 'none' }}
+            />
           </Form.Item>
           <ButtonWrapper>
             <Form.Item>
