@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
 import { camelizeKeys, formatTimerString, getApiURL } from '../utils'
@@ -11,7 +11,15 @@ import QuizStart from 'components/QuizStart'
 import QuizFinished from 'components/QuizFinished'
 
 const StyledForm = styled(Form)`
-  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `
 
 const apiURL = getApiURL()
@@ -211,11 +219,13 @@ export const OngoingQuiz = (): JSX.Element => {
           <Form.Item label="answer" name="answer">
             <Input type="text" title="answer" autoComplete="off" ref={inputFieldRef} />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Send answer
-            </Button>
-          </Form.Item>
+          <ButtonWrapper>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Send answer
+              </Button>
+            </Form.Item>
+          </ButtonWrapper>
         </StyledForm>
       </PageLayout>
     )
