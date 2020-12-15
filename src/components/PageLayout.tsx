@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Layout, PageHeader, Skeleton, Spin } from 'antd'
+import { Layout, PageHeader, Skeleton } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { WINDOW_SIZES_PX } from '../constants'
@@ -43,6 +43,7 @@ interface Props {
   headerTitle?: string
   headerSubtitle?: string
   disableHeaderTitle?: boolean
+  extra?: JSX.Element
 }
 
 export const PageLayout = ({
@@ -50,6 +51,7 @@ export const PageLayout = ({
   headerTitle,
   headerSubtitle,
   disableHeaderTitle = false,
+  extra,
 }: Props): JSX.Element => {
   const navHistory = useHistory()
 
@@ -63,6 +65,7 @@ export const PageLayout = ({
               subTitle={headerSubtitle}
               backIcon={<ArrowLeftOutlined color="white" />}
               onBack={() => navHistory.goBack()}
+              extra={extra ?? null}
             />
           )}
         </Header>
