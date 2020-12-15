@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { List, Card, Spin } from 'antd'
+import { List, Card, Spin, Button } from 'antd'
 import { PageLayout } from '../components/PageLayout'
 import { Link } from 'react-router-dom'
 import { getApiURL } from '../utils'
@@ -15,6 +15,7 @@ const getQuestionList = async (): Promise<Quiz[]> => {
 function QuizList(): JSX.Element {
   const [quizList, setQuizList] = useState<Quiz[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingQuiz, setEditingQuiz] = useState(false)
 
   useEffect(() => {
     const getQuestionListAsync = async () => {
@@ -34,12 +35,17 @@ function QuizList(): JSX.Element {
   }
 
   return (
-    <PageLayout headerTitle="quiz list">
+    <PageLayout
+      headerTitle="quiz list"
+      extra={
+        <Button onClick={() => setEditingQuiz(!editingQuiz)}>{editingQuiz ? 'Stop editing' : 'Edit quizzes'}</Button>
+      }
+    >
       <List
         dataSource={quizList}
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 3 }}
         renderItem={(item) => (
-          <Link to={`/quiz/id=${item.id}`}>
+          <Link to={editingQuiz ? `/quiz/edit/id=${item.id}` : `/quiz/id=${item.id}`}>
             <List.Item>
               <Card title={item.name}>{`Author: ${item.author}, Number of questions: ${item.numberOfQuestions}`}</Card>
             </List.Item>
