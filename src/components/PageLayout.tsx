@@ -7,7 +7,7 @@ import { WINDOW_SIZES_PX } from '../constants'
 
 const BaseLayout = styled(Layout)`
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   align-items: center;
 `
