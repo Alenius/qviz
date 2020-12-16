@@ -83,7 +83,7 @@ export const OngoingQuiz = (): JSX.Element => {
     }
 
     getQuestionsAsync()
-  }, [])
+  }, [id])
 
   useEffect(() => {
     if (currentQuestionIndex !== undefined && questions.length) {

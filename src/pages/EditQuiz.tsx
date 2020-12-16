@@ -41,7 +41,7 @@ const EditQuiz = (): JSX.Element => {
     }
 
     asyncGetQuiz()
-  }, [])
+  }, [quizId])
 
   const handleDeleteQuiz = async () => {
     console.log('hello')
