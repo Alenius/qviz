@@ -44,6 +44,7 @@ interface Props {
   headerSubtitle?: string
   disableHeaderTitle?: boolean
   extra?: JSX.Element
+  onBack?: () => void
 }
 
 export const PageLayout = ({
@@ -52,6 +53,7 @@ export const PageLayout = ({
   headerSubtitle,
   disableHeaderTitle = false,
   extra,
+  onBack,
 }: Props): JSX.Element => {
   const navHistory = useHistory()
 
@@ -64,7 +66,7 @@ export const PageLayout = ({
               title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
               subTitle={headerSubtitle}
               backIcon={<ArrowLeftOutlined color="white" />}
-              onBack={() => navHistory.goBack()}
+              onBack={onBack ?? (() => navHistory.goBack())}
               extra={extra ?? null}
             />
           )}
