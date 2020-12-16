@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { List, Card, Spin, Button } from 'antd'
 import { PageLayout } from '../components/PageLayout'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { getApiURL } from '../utils'
 import { Quiz } from 'typings'
 
@@ -16,6 +16,7 @@ function QuizList(): JSX.Element {
   const [quizList, setQuizList] = useState<Quiz[]>([])
   const [loading, setLoading] = useState(true)
   const [editingQuiz, setEditingQuiz] = useState(false)
+  const navHistory = useHistory()
 
   useEffect(() => {
     const getQuestionListAsync = async () => {
@@ -37,6 +38,7 @@ function QuizList(): JSX.Element {
   return (
     <PageLayout
       headerTitle="quiz list"
+      onBack={() => navHistory.push('/')}
       extra={
         <Button onClick={() => setEditingQuiz(!editingQuiz)}>{editingQuiz ? 'Stop editing' : 'Edit quizzes'}</Button>
       }
