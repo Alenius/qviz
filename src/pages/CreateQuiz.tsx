@@ -174,7 +174,6 @@ export const CreateQuiz = (): JSX.Element => {
                           index={index}
                           onFocus={() => {
                             setIsCurrentlyEditing('Question')
-                            console.log('hello')
                           }}
                           updateField={updateFieldText}
                         />
