@@ -1,25 +1,31 @@
-import { useState } from 'react'
-import { differenceInSeconds } from 'date-fns'
+import { useState, useEffect } from 'react'
 
-export const useTimer = (): [number, () => void, () => void] => {
-  const [startTime, setStartTime] = useState(0)
+const formatSecondsToMinutes = (totalSeconds: number) => {
+  const minutes = Math.floor(totalSeconds / 60)
+  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes
+  const seconds = totalSeconds % 60
+  const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds
+
+  return `${paddedMinutes}:${paddedSeconds}`
+}
+
+export const useTimer = (): [string, () => void, () => void] => {
   const [timerRunning, setTimerRunning] = useState(false)
-  const [timerValue, setTimerValue] = useState(0)
+  const [time, setTime] = useState(0)
+  const [formattedTime, setFormattedTime] = useState('00:00')
 
-  const startTimer = () => {
-    const currentTime = new Date().getTime()
-    setStartTime(currentTime)
-    setTimerRunning(true)
-  }
-
-  const stopTimer = () => {
+  useEffect(() => {
     if (timerRunning) {
-      const currentTime = new Date().getTime()
-      const timeDiff = differenceInSeconds(currentTime, startTime)
-      setTimerValue(timeDiff)
-      setTimerRunning(false)
+      setTimeout(() => {
+        setTime(time + 1)
+        setFormattedTime(formatSecondsToMinutes(time))
+      }, 1000)
     }
-  }
+  }, [time, timerRunning])
 
-  return [timerValue, startTimer, stopTimer]
+  const startTimer = () => setTimerRunning(true)
+  const stopTimer = () => setTimerRunning(false)
+  // const resetTimer = () => setTime(0)
+
+  return [formattedTime, startTimer, stopTimer]
 }

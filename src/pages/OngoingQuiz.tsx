@@ -67,8 +67,7 @@ export const OngoingQuiz = (): JSX.Element => {
   const [userAnswer, setUserAnswer] = useState('')
   const [correctCounter, setCorrectCounter] = useState(0)
   const [answerEntity, setAnswerEntity] = useState<AnswerEntity>(initialAnswerEntity)
-  const [timerValue, startTimer, stopTimer] = useTimer()
-  const [totalTime, setTotalTime] = useState(0)
+  const [time, startTimer, stopTimer] = useTimer()
   const [fetchingAnswer, setFetchingAnswer] = useState(false)
   const [questionAndAnswerPairs, setQuestionAndAnswerPairs] = useState<QuestionAnswerPair[]>([])
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
@@ -92,11 +91,6 @@ export const OngoingQuiz = (): JSX.Element => {
     }
   }, [currentQuestionIndex, questions])
 
-  useEffect(() => {
-    setTotalTime(totalTime + timerValue)
-    // eslint-disable-next-line
-  }, [timerValue])
-
   const fetchAnswer = async (questionId: string, userAnswer: string) => {
     setFetchingAnswer(true)
     const { correctAnswer, userAnswerWasCorrect, extraInfo } = await checkAnswer(questionId, userAnswer)
@@ -108,7 +102,6 @@ export const OngoingQuiz = (): JSX.Element => {
   const resetQuiz = () => {
     setCurrentQuestionIndex(0)
     setUserAnswer('')
-    setTotalTime(0)
     setCorrectCounter(0)
     setQuizState('NotStarted')
   }
@@ -167,7 +160,7 @@ export const OngoingQuiz = (): JSX.Element => {
       <PageLayout headerTitle={quizName}>
         <QuizFinished
           correctCounter={correctCounter}
-          totalTime={totalTime}
+          totalTime={time}
           numberOfQuestions={questions.length}
           resetQuiz={resetQuiz}
           questionAndAnswerPairs={questionAndAnswerPairs}
@@ -180,7 +173,7 @@ export const OngoingQuiz = (): JSX.Element => {
     return (
       <PageLayout headerTitle={quizName}>
         <Space direction="vertical" align="center">
-          <Typography.Text>Time: {formatTimerString(totalTime)}</Typography.Text>
+          <Typography.Text>Time: {time}</Typography.Text>
           {fetchingAnswer ? (
             <Spin />
           ) : (
@@ -209,6 +202,7 @@ export const OngoingQuiz = (): JSX.Element => {
   if (quizState === 'Answering') {
     return (
       <PageLayout headerTitle={quizName}>
+        <Typography.Title level={5}>time {time}</Typography.Title>
         <Typography.Title level={5}>
           Question {currentQuestionIndex + 1} of {questions.length}
         </Typography.Title>

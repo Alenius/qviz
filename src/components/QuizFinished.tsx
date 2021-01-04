@@ -3,12 +3,11 @@ import { Space, Typography, Button } from 'antd'
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 
-import { formatTimerString } from '../utils'
 import { QuestionAnswerPair } from '../pages/OngoingQuiz'
 
 interface QuizFinishedProps {
   correctCounter: number
-  totalTime: number
+  totalTime: string
   numberOfQuestions: number
   resetQuiz: () => void
   questionAndAnswerPairs: QuestionAnswerPair[]
@@ -28,7 +27,7 @@ const QuizFinished = ({
         Correct answers: {correctCounter}/{numberOfQuestions} ({Math.round((correctCounter / numberOfQuestions) * 100)}
         %)
       </Typography.Text>
-      <Typography.Text>Total time: {formatTimerString(totalTime)}</Typography.Text>
+      <Typography.Text>Total time: {totalTime}</Typography.Text>
       <Button type="primary" onClick={() => resetQuiz()}>
         Play this quiz again
       </Button>
