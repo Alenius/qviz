@@ -67,7 +67,7 @@ export const OngoingQuiz = (): JSX.Element => {
   const [userAnswer, setUserAnswer] = useState('')
   const [correctCounter, setCorrectCounter] = useState(0)
   const [answerEntity, setAnswerEntity] = useState<AnswerEntity>(initialAnswerEntity)
-  const [time, startTimer, stopTimer] = useTimer()
+  const [time, startTimer, stopTimer, resetTimer] = useTimer()
   const [fetchingAnswer, setFetchingAnswer] = useState(false)
   const [questionAndAnswerPairs, setQuestionAndAnswerPairs] = useState<QuestionAnswerPair[]>([])
   const isLastQuestion = currentQuestionIndex + 1 === questions.length
@@ -104,6 +104,7 @@ export const OngoingQuiz = (): JSX.Element => {
     setUserAnswer('')
     setCorrectCounter(0)
     setQuizState('NotStarted')
+    resetTimer()
   }
 
   const handleStartClick = () => {
