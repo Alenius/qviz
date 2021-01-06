@@ -9,7 +9,7 @@ const formatSecondsToMinutes = (totalSeconds: number) => {
   return `${paddedMinutes}:${paddedSeconds}`
 }
 
-export const useTimer = (): [string, () => void, () => void] => {
+export const useTimer = (): [string, () => void, () => void, () => void] => {
   const [timerRunning, setTimerRunning] = useState(false)
   const [time, setTime] = useState(0)
   const [formattedTime, setFormattedTime] = useState('00:00')
@@ -28,7 +28,7 @@ export const useTimer = (): [string, () => void, () => void] => {
 
   const startTimer = () => setTimerRunning(true)
   const stopTimer = () => setTimerRunning(false)
-  // const resetTimer = () => setTime(0)
+  const resetTimer = () => setTime(0)
 
-  return [formattedTime, startTimer, stopTimer]
+  return [formattedTime, startTimer, stopTimer, resetTimer]
 }
