@@ -15,10 +15,13 @@ export const useTimer = (): [string, () => void, () => void] => {
   const [formattedTime, setFormattedTime] = useState('00:00')
 
   useEffect(() => {
+    setFormattedTime(formatSecondsToMinutes(time))
+  }, [time])
+
+  useEffect(() => {
     if (timerRunning) {
       setTimeout(() => {
         setTime(time + 1)
-        setFormattedTime(formatSecondsToMinutes(time))
       }, 1000)
     }
   }, [time, timerRunning])
