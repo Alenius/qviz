@@ -4,7 +4,7 @@ import { Alert, Button, Form, Input, Space, Spin, Typography } from 'antd'
 import { useParams } from 'react-router-dom'
 
 import { PageLayout } from '../components/PageLayout'
-import { camelizeKeys, formatTimerString, getApiURL } from '../utils'
+import { camelizeKeys, getApiURL } from '../utils'
 import { useTimer } from '../hooks/useTimer'
 import { Question, Answer, UnformattedQuestion } from 'typings'
 import QuizStart from 'components/QuizStart'
