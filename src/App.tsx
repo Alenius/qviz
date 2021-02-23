@@ -6,12 +6,20 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import QuizList from './pages/QuizList'
 import { CreateQuiz } from './pages/CreateQuiz'
 import { OngoingQuiz } from './pages/OngoingQuiz'
+import CreateUser from './pages/CreateUser'
+import Login from './pages/Login'
 import EditQuiz from 'pages/EditQuiz'
 
 function App(): JSX.Element {
   return (
     <Router>
       <Switch>
+        <Route path="/create-user">
+          <CreateUser />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
         <Route path="/create-quiz">
           <CreateQuiz />
         </Route>

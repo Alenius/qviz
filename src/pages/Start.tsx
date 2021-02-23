@@ -36,6 +36,18 @@ export default function Start(): JSX.Element {
             <Link to="/create-quiz">Create new</Link>
           </Button>
         </StyledSpace>
+        <StyledSpace>
+          <Typography.Text>Press this button to create a new user</Typography.Text>
+          <Button type="primary">
+            <Link to="/create-user">Create user</Link>
+          </Button>
+        </StyledSpace>
+        <StyledSpace>
+          <Typography.Text>Press this button to login</Typography.Text>
+          <Button type="primary">
+            <Link to="/login">Login</Link>
+          </Button>
+        </StyledSpace>
       </Space>
     </PageLayout>
   )
