@@ -9,38 +9,44 @@ import { OngoingQuiz } from './pages/OngoingQuiz'
 import CreateUser from './pages/CreateUser'
 import Login from './pages/Login'
 import EditQuiz from 'pages/EditQuiz'
-// import { useAuth, AuthProvider } from './hooks/useAuth'
 
-const user = { username: '' }
-export const AuthContext = createContext({ user, login: () => {} }) // eslint-disable-line
-
-const PrivateRoute = ({ children, ...rest }: any) => {
+const PrivateRoute = ({ children, ...rest }: any) => { // eslint-disable-line
   return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        user ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/login',
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
+    <AuthContext.Consumer>
+      {({ auth }) => (
+        <Route
+          {...rest}
+          render={({ location }) =>
+            auth.rawToken ? (
+              children
+            ) : (
+              <Redirect
+                to={{
+                  pathname: '/login',
+                  state: { from: location },
+                }}
+              />
+            )
+          }
+        />
+      )}
+    </AuthContext.Consumer>
   )
 }
 
+export type Auth = { isAdmin: boolean; username: string; userId: string; rawToken: string }
+export type LoginFn = (auth: Auth) => void
+const defaultAuth: Auth = { isAdmin: false, username: '', userId: '', rawToken: '' }
+const defaultLoginFn: LoginFn = () => null
+export const AuthContext = createContext({ auth: defaultAuth, login: defaultLoginFn }) // eslint-disable-line
+
 function App(): JSX.Element {
-  const myUser = { username: '' }
-  const [state, setState] = useState({ user: myUser })
-  const login = () => setState({ user: { username: 'poop' } })
+  const [state, setState] = useState<Auth>(defaultAuth)
+  const login = (auth: Auth) =>
+    setState({ username: auth.username, isAdmin: auth.isAdmin, userId: auth.userId, rawToken: auth.rawToken })
 
   return (
-    <AuthContext.Provider value={{ ...state, login }}>
+    <AuthContext.Provider value={{ auth: { ...state }, login }}>
       <Router>
         <Switch>
           <Route path="/create-user">
