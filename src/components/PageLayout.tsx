@@ -4,6 +4,7 @@ import { Layout, PageHeader, Skeleton } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { WINDOW_SIZES_PX } from '../constants'
+import { AuthContext } from 'App'
 
 const BaseLayout = styled(Layout)`
   min-height: 100vh;
@@ -58,22 +59,27 @@ export const PageLayout = ({
   const navHistory = useHistory()
 
   return (
-    <BaseLayout style={{ minHeight: '100vh' }}>
-      <StyledLayout>
-        <Header>
-          {!disableHeaderTitle && (
-            <PageHeader
-              title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
-              subTitle={headerSubtitle}
-              backIcon={<ArrowLeftOutlined color="white" />}
-              onBack={onBack ?? (() => navHistory.goBack())}
-              extra={extra ?? null}
-            />
-          )}
-        </Header>
-        <Content>{children}</Content>
-      </StyledLayout>
-      <Footer />
-    </BaseLayout>
+    <AuthContext.Consumer>
+      {({ auth }) => (
+        <BaseLayout style={{ minHeight: '100vh' }}>
+          <StyledLayout>
+            <Header>
+              {!disableHeaderTitle && (
+                <PageHeader
+                  title={headerTitle || <Skeleton.Input style={{ width: 100 }} />}
+                  subTitle={headerSubtitle}
+                  backIcon={<ArrowLeftOutlined color="white" />}
+                  onBack={onBack ?? (() => navHistory.goBack())}
+                  // extra={extra ?? null}
+                  extra={auth.username ? `Logged in as ${auth.username}` : 'Logged out'}
+                />
+              )}
+            </Header>
+            <Content>{children}</Content>
+          </StyledLayout>
+          <Footer />
+        </BaseLayout>
+      )}
+    </AuthContext.Consumer>
   )
 }

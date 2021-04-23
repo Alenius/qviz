@@ -38,15 +38,16 @@ export type Auth = { isAdmin: boolean; username: string; userId: string; rawToke
 export type LoginFn = (auth: Auth) => void
 const defaultAuth: Auth = { isAdmin: false, username: '', userId: '', rawToken: '' }
 const defaultLoginFn: LoginFn = () => null
-export const AuthContext = createContext({ auth: defaultAuth, login: defaultLoginFn }) // eslint-disable-line
+export const AuthContext = createContext({ auth: defaultAuth, login: defaultLoginFn, logout: () => {} }) // eslint-disable-line
 
 function App(): JSX.Element {
   const [state, setState] = useState<Auth>(defaultAuth)
   const login = (auth: Auth) =>
     setState({ username: auth.username, isAdmin: auth.isAdmin, userId: auth.userId, rawToken: auth.rawToken })
+  const logout = () => setState(defaultAuth)
 
   return (
-    <AuthContext.Provider value={{ auth: { ...state }, login }}>
+    <AuthContext.Provider value={{ auth: { ...state }, login, logout }}>
       <Router>
         <Switch>
           <Route path="/create-user">
